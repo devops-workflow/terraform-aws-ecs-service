@@ -1,4 +1,6 @@
-tf_aws_ecs_service
+[![CircleCI](https://circleci.com/gh/devops-workflow/terraform-aws-ecs-service/tree/master.svg?style=svg)](https://circleci.com/gh/devops-workflow/terraform-aws-ecs-service/tree/master)
+
+terraform-aws-ecs-service
 ===========
 
 Terraform module for deploying and managing a generic [ECS](https://aws.amazon.com/ecs/) service onto an existing cluster.

@@ -1,27 +1,74 @@
+// Variables specific to module label
+variable "attributes" {
+  description = "Suffix name with additional attributes (policy, role, etc.)"
+  type        = "list"
+  default     = []
+}
+
+variable "delimiter" {
+  description = "Delimiter to be used between `name`, `namespaces`, `attributes`, etc."
+  default     = "-"
+}
+
+variable "environment" {
+  description = "Environment (ex: `dev`, `qa`, `stage`, `prod`). (Second or top level namespace. Depending on namespacing options)"
+}
+
+variable "name" {
+  description = "Base name for resources"
+}
+
+variable "namespace-env" {
+  description = "Prefix name with the environment. If true, format is: <env>-<name>"
+  default     = true
+}
+
+variable "namespace-org" {
+  description = "Prefix name with the organization. If true, format is: <org>-<env namespaced name>. If both env and org namespaces are used, format will be <org>-<env>-<name>"
+  default     = false
+}
+
+variable "organization" {
+  description = "Organization name (Top level namespace)."
+  default     = ""
+}
+
+variable "tags" {
+  description = "A map of additional tags"
+  type        = "map"
+  default     = {}
+}
+
+// Variables specific to this module
+variable "enabled" {
+  description = "Set to false to prevent the module from creating anything"
+  default     = true
+}
+
 variable "region" {
-  type        = "string"
   description = "AWS region in which ECS cluster is located (default is 'us-east-1')"
+  type        = "string"
   default     = "us-east-1"
 }
 
 variable "vpc_id" {
-  type        = "string"
   description = "ID of VPC in which ECS cluster is located"
+  type        = "string"
 }
 
 variable "ecs_cluster_arn" {
-  type        = "string"
   description = "ARN of ECS cluster in which the service will be deployed"
+  type        = "string"
 }
 
 variable "ecs_security_group_id" {
-  type        = "string"
   description = "Security group ID of ECS cluster in which the service will be deployed"
+  type        = "string"
 }
 
 variable "ecs_desired_count" {
-  type        = "string"
   description = "Desired number of containers in the task (default 1)"
+  type        = "string"
   default     = 1
 }
 
@@ -31,8 +78,8 @@ variable "docker_command" {
 }
 
 variable "docker_image" {
-  type        = "string"
   description = "Docker image to use for task"
+  type        = "string"
 }
 
 variable "docker_memory" {
@@ -46,14 +93,14 @@ variable "docker_memory_reservation" {
 }
 
 variable "docker_port_mappings" {
-  type        = "list"
   description = "List of port mapping maps of format { \"containerPort\" = integer, [ \"hostPort\" = integer, \"protocol\" = \"tcp or udp\" ] }"
+  type        = "list"
   default     = []
 }
 
 variable "docker_mount_points" {
-  type        = "list"
   description = "List of mount point maps of format { \"sourceVolume\" = \"vol_name\", \"containerPath\" = \"path\", [\"readOnly\" = \"true or false\" ] }"
+  type        = "list"
   default     = []
 }
 
@@ -63,8 +110,8 @@ variable "ecs_data_volume_path" {
 }
 
 variable "docker_environment" {
-  type        = "list"
   description = "List of environment maps of format { \"name\" = \"var_name\", \"value\" = \"var_value\" }"
+  type        = "list"
   default     = []
 }
 
@@ -84,26 +131,26 @@ variable "task_identifier" {
 }
 
 variable "log_group_name" {
-  type        = "string"
   description = "Name for CloudWatch Log Group that will receive collector logs (must be unique, default is created from service_identifier and task_identifier)"
+  type        = "string"
   default     = ""
 }
 
 variable "extra_task_policy_arns" {
-  type        = "list"
   description = "List of ARNs of IAM policies to be attached to the ECS task role (in addition to the default policy, so cannot be more than 9 ARNs)"
+  type        = "list"
   default     = []
 }
 
 variable "acm_cert_domain" {
-  type        = "string"
   description = "Domain name of ACM-managed certificate"
+  type        = "string"
   default     = ""
 }
 
 variable "alb_enable_https" {
   description = "Enable HTTPS listener in ALB (default true)"
-  default     = "true"
+  default     = "false"
 }
 
 variable "alb_enable_http" {
@@ -117,15 +164,25 @@ variable "alb_internal" {
 }
 
 variable "alb_subnet_ids" {
-  type        = "list"
   description = "VPC subnet IDs in which to create the ALB (unnecessary if neither alb_enable_https or alb_enable_http are true)"
+  type        = "list"
   default     = []
 }
 
 variable "app_port" {
-  type        = "string"
   description = "Numeric port on which application listens (unnecessary if neither alb_enable_https or alb_enable_http are true)"
+  type        = "string"
   default     = ""
+}
+
+variable "ecs_deployment_maximum_percent" {
+  description = "Upper limit in percentage of tasks that can be running during a deployment (default 200)"
+  default     = "200"
+}
+
+variable "ecs_deployment_minimum_healthy_percent" {
+  description = "Lower limit in percentage of tasks that must remain healthy during a deployment (default 100)"
+  default     = "100"
 }
 
 variable "ecs_placement_strategy_type" {
@@ -191,4 +248,9 @@ variable "alb_stickiness_enabled" {
 variable "alb_cookie_duration" {
   description = "Duration of ALB session stickiness cookie in seconds (default 86400)"
   default     = "86400"
+}
+
+variable "container_definition" {
+  description = "Container definition when not using module default definition"
+  default     = ""
 }

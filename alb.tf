@@ -1,4 +1,14 @@
-# ALB
+data "aws_region" "region" {
+  name = "${var.region}"
+}
+
+data "aws_vpc" "vpc" {
+  id = "${var.vpc_id}"
+}
+
+###
+### ECS Service ALB
+###
 
 data "aws_acm_certificate" "alb" {
   count    = "${var.alb_enable_https ? 1 : 0}"
@@ -11,6 +21,7 @@ data "aws_security_group" "ecs" {
   vpc_id = "${data.aws_vpc.vpc.id}"
 }
 
+# TODO: Change to use LB module
 resource "aws_alb" "service" {
   count           = "${(var.alb_enable_https || var.alb_enable_http) ? 1 : 0}"
   name            = "${var.service_identifier}-${var.task_identifier}"
@@ -79,6 +90,7 @@ resource "aws_alb_target_group" "service" {
   }
 }
 
+# TODO: Use security group module
 resource "aws_security_group" "alb" {
   count       = "${(var.alb_enable_https || var.alb_enable_http) ? 1 : 0}"
   name_prefix = "alb-${var.service_identifier}-${var.task_identifier}-"

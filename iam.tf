@@ -1,8 +1,13 @@
+###
+### ECS Service IAM
+###
+
+# TODO: Create IAM module
 data "aws_iam_policy_document" "task_policy" {
   statement {
     actions = [
-      "ec2:Describe*",
       "autoscaling:Describe*",
+      "ec2:Describe*",
       "ec2:DescribeAddresses",
       "ec2:DescribeInstances",
       "ec2:DescribeTags",
