@@ -132,7 +132,7 @@ variable "alb_stickiness_enabled" {
 
 variable "lb_type" {
   description = "Type of LB to create: application, network"
-  default = "application"
+  default     = "application"
 }
 
 // Variables specific to Security Group module

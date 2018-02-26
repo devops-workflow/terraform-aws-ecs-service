@@ -26,37 +26,38 @@ module "label" {
 }
 
 locals {
-  lb_protocols  = "${var.alb_enable_http ? "HTTP" : ""},${var.alb_enable_https ? "HTTPS" : ""}"
+  lb_protocols   = "${var.alb_enable_http ? "HTTP" : ""},${var.alb_enable_https ? "HTTPS" : ""}"
   log_group_name = "ecs/${module.label.name}"
-  sg_rules      = "${var.alb_enable_http ? "http-80-tcp" : ""},${var.alb_enable_https ? "https-443-tcp" : ""}"
+  sg_rules       = "${var.alb_enable_http ? "http-80-tcp" : ""},${var.alb_enable_https ? "https-443-tcp" : ""}"
 }
 
 module "lb" {
-  source        = "devops-workflow/lb/aws"
-  version       = "3.0.3"
-  enabled       = "${module.enabled.value}"
-  name          = "${module.label.name}"
-  attributes    = "${var.attributes}"
-  delimiter     = "${var.delimiter}"
-  environment   = "${var.environment}"
-  namespace-env = "${var.namespace-env}"
-  namespace-org = "${var.namespace-org}"
-  organization  = "${var.organization}"
-  tags          = "${var.tags}"
+  source           = "devops-workflow/lb/aws"
+  version          = "3.0.3"
+  enabled          = "${module.enabled.value}"
+  name             = "${module.label.name}"
+  attributes       = "${var.attributes}"
+  delimiter        = "${var.delimiter}"
+  environment      = "${var.environment}"
+  namespace-env    = "${var.namespace-env}"
+  namespace-org    = "${var.namespace-org}"
+  organization     = "${var.organization}"
+  tags             = "${var.tags}"
   certificate_name = "${var.acm_cert_domain}"
   lb_protocols     = "${compact(split(",", local.lb_protocols))}"
-  internal              = "${var.lb_internal}"
-  subnets   = "${var.alb_subnet_ids}"
+  internal         = "${var.lb_internal}"
+  subnets          = "${var.alb_subnet_ids}"
+
   /*
   subnets               = "${split(",",
     var.lb_internal ?
       join(",", module.aws_env.private_subnet_ids) :
       join(",", module.aws_env.public_subnet_ids))}"
   */
-  vpc_id                = "${var.vpc_id}"
-  security_groups       = ["${module.sg-lb.id}"]
-  type                  = "${var.lb_type}"
-  
+
+  vpc_id                           = "${var.vpc_id}"
+  security_groups                  = ["${module.sg-lb.id}"]
+  type                             = "${var.lb_type}"
   health_check_interval            = "${var.alb_healthcheck_interval}"
   health_check_path                = "${var.alb_healthcheck_path}"
   health_check_port                = "${var.alb_healthcheck_port}"
@@ -68,36 +69,37 @@ module "lb" {
 }
 
 module "sg-lb" {
-  source        = "devops-workflow/security-group/aws"
-  version       = "2.0.0"
-  enabled       = "${module.enabled.value}"
-  name          = "${module.label.name}"
-  attributes    = "${var.attributes}"
-  delimiter     = "${var.delimiter}"
-  environment   = "${var.environment}"
-  namespace-env = "${var.namespace-env}"
-  namespace-org = "${var.namespace-org}"
-  organization  = "${var.organization}"
-  tags          = "${var.tags}"
+  source              = "devops-workflow/security-group/aws"
+  version             = "2.0.0"
+  enabled             = "${module.enabled.value}"
+  name                = "${module.label.name}"
+  attributes          = "${var.attributes}"
+  delimiter           = "${var.delimiter}"
+  environment         = "${var.environment}"
+  namespace-env       = "${var.namespace-env}"
+  namespace-org       = "${var.namespace-org}"
+  organization        = "${var.organization}"
+  tags                = "${var.tags}"
   description         = "LB for ECS service: ${module.label.name}"
   vpc_id              = "${var.vpc_id}"
   egress_cidr_blocks  = ["0.0.0.0/0"]
   egress_rules        = ["all-all"]
-  ingress_cidr_blocks = ["10.0.0.0/8"] # "${var.allowed_cidr_blocks}"
+  ingress_cidr_blocks = ["10.0.0.0/8"]                             # "${var.allowed_cidr_blocks}"
   ingress_rules       = "${compact(split(",", local.sg_rules))}"
 }
+
 # TODO: separate service name & container name. Make different to imporve logging, etc
 
 # DNS for LB
 module "route53-aliases" {
   #source                  = "git::https://github.com/devops-workflow/terraform-aws-route53-alias.git"
-  source                  = "devops-workflow/route53-alias/aws"
-  version                 = "0.2.4"
-  aliases                 = "${compact(concat(list(module.label.name), var.dns_aliases))}"
-  parent_zone_name        = "${var.environment}.${var.organization}.com."
-  target_dns_name         = "${module.lb.dns_name}"
-  target_zone_id          = "${module.lb.zone_id}"
-  evaluate_target_health  = true
+  source                 = "devops-workflow/route53-alias/aws"
+  version                = "0.2.4"
+  aliases                = "${compact(concat(list(module.label.name), var.dns_aliases))}"
+  parent_zone_name       = "${var.environment}.${var.organization}.com."
+  target_dns_name        = "${module.lb.dns_name}"
+  target_zone_id         = "${module.lb.zone_id}"
+  evaluate_target_health = true
 }
 
 data "template_file" "container_definition" {
@@ -156,7 +158,7 @@ resource "aws_ecs_service" "service" {
   depends_on = [
     "aws_cloudwatch_log_group.task",
     "aws_iam_role.service",
-    "module.lb"
+    "module.lb",
   ]
 }
 
