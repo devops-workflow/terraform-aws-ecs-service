@@ -2,6 +2,9 @@
 ### Terraform AWS ECS Service
 ###
 
+# https://www.terraform.io/docs/providers/aws/r/ecs_service.html
+# https://www.terraform.io/docs/providers/aws/r/ecs_task_definition.html
+
 module "enabled" {
   source  = "devops-workflow/boolean/local"
   version = "0.1.1"
@@ -12,14 +15,89 @@ module "enabled" {
 module "label" {
   source        = "devops-workflow/label/local"
   version       = "0.1.3"
-  organization  = "${var.organization}"
-  name          = "${var.name}"                 # -> service_identifier
+  name          = "${var.name}"
+  attributes    = "${var.attributes}"
+  delimiter     = "${var.delimiter}"
+  environment   = "${var.environment}"
   namespace-env = "${var.namespace-env}"
   namespace-org = "${var.namespace-org}"
-  environment   = "${var.environment}"
-  delimiter     = "${var.delimiter}"
-  attributes    = "${var.attributes}"
+  organization  = "${var.organization}"
   tags          = "${var.tags}"
+}
+
+locals {
+  lb_protocols  = "${var.alb_enable_http ? "HTTP" : ""},${var.alb_enable_https ? "HTTPS" : ""}"
+  log_group_name = "ecs/${module.label.name}"
+  sg_rules      = "${var.alb_enable_http ? "http-80-tcp" : ""},${var.alb_enable_https ? "https-443-tcp" : ""}"
+}
+
+module "lb" {
+  source        = "devops-workflow/lb/aws"
+  version       = "3.0.3"
+  enabled       = "${module.enabled.value}"
+  name          = "${module.label.name}"
+  attributes    = "${var.attributes}"
+  delimiter     = "${var.delimiter}"
+  environment   = "${var.environment}"
+  namespace-env = "${var.namespace-env}"
+  namespace-org = "${var.namespace-org}"
+  organization  = "${var.organization}"
+  tags          = "${var.tags}"
+  certificate_name = "${var.acm_cert_domain}"
+  lb_protocols     = "${compact(split(",", local.lb_protocols))}"
+  internal              = "${var.lb_internal}"
+  subnets   = "${var.alb_subnet_ids}"
+  /*
+  subnets               = "${split(",",
+    var.lb_internal ?
+      join(",", module.aws_env.private_subnet_ids) :
+      join(",", module.aws_env.public_subnet_ids))}"
+  */
+  vpc_id                = "${var.vpc_id}"
+  security_groups       = ["${module.sg-lb.id}"]
+  type                  = "${var.lb_type}"
+  
+  health_check_interval            = "${var.alb_healthcheck_interval}"
+  health_check_path                = "${var.alb_healthcheck_path}"
+  health_check_port                = "${var.alb_healthcheck_port}"
+  health_check_protocol            = "${var.alb_healthcheck_protocol}"
+  health_check_timeout             = "${var.alb_healthcheck_timeout}"
+  health_check_healthy_threshold   = "${var.alb_healthcheck_healthy_threshold}"
+  health_check_unhealthy_threshold = "${var.alb_healthcheck_unhealthy_threshold}"
+  health_check_matcher             = "${var.alb_healthcheck_matcher}"
+}
+
+module "sg-lb" {
+  source        = "devops-workflow/security-group/aws"
+  version       = "2.0.0"
+  enabled       = "${module.enabled.value}"
+  name          = "${module.label.name}"
+  attributes    = "${var.attributes}"
+  delimiter     = "${var.delimiter}"
+  environment   = "${var.environment}"
+  namespace-env = "${var.namespace-env}"
+  namespace-org = "${var.namespace-org}"
+  organization  = "${var.organization}"
+  tags          = "${var.tags}"
+  description         = "LB for ECS service: ${module.label.name}"
+  vpc_id              = "${var.vpc_id}"
+  egress_cidr_blocks  = ["0.0.0.0/0"]
+  egress_rules        = ["all-all"]
+  ingress_cidr_blocks = ["10.0.0.0/8"] # "${var.allowed_cidr_blocks}"
+  ingress_rules       = "${compact(split(",", local.sg_rules))}"
+}
+# TODO: separate service name & container name. Make different to imporve logging, etc
+
+# DNS for LB
+module "route53-aliases" {
+  #source                  = "git::https://github.com/devops-workflow/terraform-aws-route53-alias.git"
+  source                  = "devops-workflow/route53-alias/aws"
+  version                 = "0.2.4"
+  aliases                 = "${compact(concat(list(module.label.name), var.dns_aliases))}"
+  parent_zone_name        = "${var.environment}.${var.organization}.com."
+  target_dns_name         = "${module.lb.dns_name}"
+  target_zone_id          = "${module.lb.zone_id}"
+  evaluate_target_health  = true
 }
 
 data "template_file" "container_definition" {
@@ -27,8 +105,7 @@ data "template_file" "container_definition" {
   template = "${file("${path.module}/files/container_definition.json")}"
 
   vars {
-    service_identifier    = "${var.service_identifier}"
-    task_identifier       = "${var.task_identifier}"
+    name                  = "${module.label.name}"
     image                 = "${var.docker_image}"
     memory                = "${var.docker_memory}"
     memory_reservation    = "${var.docker_memory_reservation}"
@@ -36,15 +113,15 @@ data "template_file" "container_definition" {
     command_override      = "${length(var.docker_command) > 0 ? "\"command\": [\"${var.docker_command}\"]," : ""}"
     environment           = "${jsonencode(var.docker_environment)}"
     mount_points          = "${jsonencode(var.docker_mount_points)}"
-    awslogs_group         = "${var.service_identifier}-${var.task_identifier}"
-    awslogs_region        = "${data.aws_region.region.name}"
-    awslogs_stream_prefix = "${var.service_identifier}"
+    awslogs_group         = "${local.log_group_name}"
+    awslogs_region        = "${var.region}"
+    awslogs_stream_prefix = "${module.label.environment}"
   }
 }
 
 resource "aws_ecs_task_definition" "task" {
   count                 = "${module.enabled.value}"
-  family                = "${var.service_identifier}-${var.task_identifier}"
+  family                = "${module.label.id}"
   container_definitions = "${var.container_definition == "" ? data.template_file.container_definition.rendered : var.container_definition }"
   network_mode          = "${var.network_mode}"
   task_role_arn         = "${aws_iam_role.task.arn}"
@@ -56,36 +133,36 @@ resource "aws_ecs_task_definition" "task" {
 }
 
 resource "aws_ecs_service" "service" {
-  count           = "${module.enabled.value}"
-  name            = "${var.service_identifier}-${var.task_identifier}-service"
-  cluster         = "${var.ecs_cluster_arn}"
-  task_definition = "${aws_ecs_task_definition.task.arn}"
-  desired_count   = "${var.ecs_desired_count}"
-  iam_role        = "${aws_iam_role.service.arn}"
-
-  #deployment_maximum_percent = "${var.ecs_deployment_maximum_percent}"
-  #deployment_minimum_healthy_percent = "${var.ecs_deployment_minimum_healthy_percent}"
+  count                              = "${module.enabled.value}"
+  name                               = "${module.label.name}"
+  cluster                            = "${var.ecs_cluster_arn}"
+  task_definition                    = "${aws_ecs_task_definition.task.arn}"
+  desired_count                      = "${var.ecs_desired_count}"
+  iam_role                           = "${aws_iam_role.service.arn}"
+  deployment_maximum_percent         = "${var.ecs_deployment_maximum_percent}"
+  deployment_minimum_healthy_percent = "${var.ecs_deployment_minimum_healthy_percent}"
 
   placement_strategy {
     type  = "${var.ecs_placement_strategy_type}"
     field = "${var.ecs_placement_strategy_field}"
   }
+
   load_balancer {
-    target_group_arn = "${aws_alb_target_group.service.arn}"
-    container_name   = "${var.service_identifier}-${var.task_identifier}"
+    target_group_arn = "${element(module.lb.target_group_arns, 0)}"
+    container_name   = "${module.label.name}"
     container_port   = "${var.app_port}"
   }
+
   depends_on = [
-    "aws_alb_listener.service_http",
-    "aws_alb_listener.service_https",
-    "aws_alb_target_group.service",
     "aws_cloudwatch_log_group.task",
     "aws_iam_role.service",
+    "module.lb"
   ]
 }
 
 resource "aws_cloudwatch_log_group" "task" {
   count             = "${module.enabled.value}"
-  name              = "${var.service_identifier}-${var.task_identifier}"
+  name              = "${local.log_group_name}"
   retention_in_days = "${var.ecs_log_retention}"
+  tags              = "${module.label.tags}"
 }

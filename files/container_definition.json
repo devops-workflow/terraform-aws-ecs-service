@@ -1,6 +1,6 @@
 [
     {
-        "name": "${service_identifier}-${task_identifier}",
+        "name": "${name}",
         "image": "${image}",
         "memory": ${memory},
         "memoryReservation": ${memory_reservation},

@@ -1,4 +1,6 @@
+//
 // Variables specific to module label
+//
 variable "attributes" {
   description = "Suffix name with additional attributes (policy, role, etc.)"
   type        = "list"
@@ -39,7 +41,109 @@ variable "tags" {
   default     = {}
 }
 
+//
+// Variables specific to DNS Aliases module
+//
+variable "dns_aliases" {
+  description = "Additional DNS names"
+  type        = "list"
+  default     = []
+}
+
+//
+// Variables specific to LB module
+//
+variable "alb_enable_https" {
+  description = "Enable HTTPS listener in LB (http or https MUST be enabled)"
+  default     = "false"
+}
+
+variable "alb_enable_http" {
+  description = "Enable HTTP listener in LB (http or https MUST be enabled)"
+  default     = true
+}
+
+variable "lb_internal" {
+  description = "Configure LB as internal-only"
+  default     = true
+}
+
+variable "alb_subnet_ids" {
+  description = "VPC subnet IDs in which to create the LB (unnecessary if neither alb_enable_https or alb_enable_http are true)"
+  type        = "list"
+  default     = []
+}
+
+variable "acm_cert_domain" {
+  description = "Domain name of ACM-managed certificate"
+  type        = "string"
+  default     = ""
+}
+
+variable "alb_healthcheck_interval" {
+  description = "Time in seconds between LB health checks (default 30)"
+  default     = 30
+}
+
+variable "alb_healthcheck_path" {
+  description = "URI path for LB health checks (default /)"
+  default     = "/"
+}
+
+variable "alb_healthcheck_port" {
+  description = "Port for LB to use when connecting health checks (default same as application traffic)"
+  default     = "traffic-port"
+}
+
+variable "alb_healthcheck_protocol" {
+  description = "Protocol for LB to use when connecting health checks (default HTTP)"
+  default     = "HTTP"
+}
+
+variable "alb_healthcheck_timeout" {
+  description = "Timeout in seconds for LB to use when connecting health checks (default 5)"
+  default     = 5
+}
+
+variable "alb_healthcheck_healthy_threshold" {
+  description = "Number of consecutive successful health checks before marking service as healthy (default 5)"
+  default     = 5
+}
+
+variable "alb_healthcheck_unhealthy_threshold" {
+  description = "Number of consecutive failed health checks before marking service as unhealthy (default 2)"
+  default     = 5
+}
+
+variable "alb_healthcheck_matcher" {
+  description = "HTTP response codes to accept as healthy (default 200)"
+  default     = "200-399"
+}
+
+variable "alb_cookie_duration" {
+  description = "Duration of LB session stickiness cookie in seconds (default 86400)"
+  default     = "86400"
+}
+
+variable "alb_stickiness_enabled" {
+  description = "Enable LB session stickiness (default false)"
+  default     = "false"
+}
+
+variable "lb_type" {
+  description = "Type of LB to create: application, network"
+  default = "application"
+}
+
+// Variables specific to Security Group module
+
+//
+// Variables for container definition template
+//
+
+//
 // Variables specific to this module
+//
 variable "enabled" {
   description = "Set to false to prevent the module from creating anything"
   default     = true
@@ -142,33 +246,6 @@ variable "extra_task_policy_arns" {
   default     = []
 }
 
-variable "acm_cert_domain" {
-  description = "Domain name of ACM-managed certificate"
-  type        = "string"
-  default     = ""
-}
-
-variable "alb_enable_https" {
-  description = "Enable HTTPS listener in ALB (default true)"
-  default     = "false"
-}
-
-variable "alb_enable_http" {
-  description = "Enable HTTP listener in ALB (default false)"
-  default     = "false"
-}
-
-variable "alb_internal" {
-  description = "Configure ALB as internal-only (default false)"
-  default     = "false"
-}
-
-variable "alb_subnet_ids" {
-  description = "VPC subnet IDs in which to create the ALB (unnecessary if neither alb_enable_https or alb_enable_http are true)"
-  type        = "list"
-  default     = []
-}
-
 variable "app_port" {
   description = "Numeric port on which application listens (unnecessary if neither alb_enable_https or alb_enable_http are true)"
   type        = "string"
@@ -198,56 +275,6 @@ variable "ecs_placement_strategy_field" {
 variable "ecs_log_retention" {
   description = "Number of days of ECS task logs to retain (default 3)"
   default     = 3
-}
-
-variable "alb_healthcheck_interval" {
-  description = "Time in seconds between ALB health checks (default 30)"
-  default     = 30
-}
-
-variable "alb_healthcheck_path" {
-  description = "URI path for ALB health checks (default /)"
-  default     = "/"
-}
-
-variable "alb_healthcheck_port" {
-  description = "Port for ALB to use when connecting health checks (default same as application traffic)"
-  default     = "traffic-port"
-}
-
-variable "alb_healthcheck_protocol" {
-  description = "Protocol for ALB to use when connecting health checks (default HTTP)"
-  default     = "HTTP"
-}
-
-variable "alb_healthcheck_timeout" {
-  description = "Timeout in seconds for ALB to use when connecting health checks (default 5)"
-  default     = 5
-}
-
-variable "alb_healthcheck_healthy_threshold" {
-  description = "Number of consecutive successful health checks before marking service as healthy (default 5)"
-  default     = 5
-}
-
-variable "alb_healthcheck_unhealthy_threshold" {
-  description = "Number of consecutive failed health checks before marking service as unhealthy (default 2)"
-  default     = 5
-}
-
-variable "alb_healthcheck_matcher" {
-  description = "HTTP response codes to accept as healthy (default 200)"
-  default     = "200"
-}
-
-variable "alb_stickiness_enabled" {
-  description = "Enable ALB session stickiness (default false)"
-  default     = "false"
-}
-
-variable "alb_cookie_duration" {
-  description = "Duration of ALB session stickiness cookie in seconds (default 86400)"
-  default     = "86400"
 }
 
 variable "container_definition" {
