@@ -59,12 +59,12 @@ module "service-1" {
   ecs_security_group_id = "${module.ecs-cluster.cluster_security_group_id}"
 
   #docker_image          = "105667981759.dkr.ecr.us-west-2.amazonaws.com/wiser/map-application:latest"
-  docker_image   = "infrastructureascode/hello-world:latest"
-  vpc_id         = "${data.aws_vpc.vpc.id}"
-  app_port       = 8080                                              # target group & container port
-  alb_subnet_ids = ["${data.aws_subnet_ids.private_subnet_ids.ids}"]
-  region         = "${var.region}"
+  docker_image  = "infrastructureascode/hello-world:latest"
+  vpc_id        = "${data.aws_vpc.vpc.id}"
+  app_port      = 8080                                              # target group & container port
+  lb_subnet_ids = ["${data.aws_subnet_ids.private_subnet_ids.ids}"]
+  region        = "${var.region}"
 
-  alb_enable_http = true
-  lb_internal     = true
+  lb_enable_http = true
+  lb_internal    = true
 }

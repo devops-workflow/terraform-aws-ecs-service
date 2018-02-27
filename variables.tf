@@ -53,12 +53,12 @@ variable "dns_aliases" {
 //
 // Variables specific to LB module
 //
-variable "alb_enable_https" {
+variable "lb_enable_https" {
   description = "Enable HTTPS listener in LB (http or https MUST be enabled)"
   default     = "false"
 }
 
-variable "alb_enable_http" {
+variable "lb_enable_http" {
   description = "Enable HTTP listener in LB (http or https MUST be enabled)"
   default     = true
 }
@@ -68,8 +68,8 @@ variable "lb_internal" {
   default     = true
 }
 
-variable "alb_subnet_ids" {
-  description = "VPC subnet IDs in which to create the LB (unnecessary if neither alb_enable_https or alb_enable_http are true)"
+variable "lb_subnet_ids" {
+  description = "VPC subnet IDs in which to create the LB (unnecessary if neither lb_enable_https or lb_enable_http are true)"
   type        = "list"
   default     = []
 }
@@ -80,52 +80,52 @@ variable "acm_cert_domain" {
   default     = ""
 }
 
-variable "alb_healthcheck_interval" {
+variable "lb_healthcheck_interval" {
   description = "Time in seconds between LB health checks (default 30)"
   default     = 30
 }
 
-variable "alb_healthcheck_path" {
+variable "lb_healthcheck_path" {
   description = "URI path for LB health checks (default /)"
   default     = "/"
 }
 
-variable "alb_healthcheck_port" {
+variable "lb_healthcheck_port" {
   description = "Port for LB to use when connecting health checks (default same as application traffic)"
   default     = "traffic-port"
 }
 
-variable "alb_healthcheck_protocol" {
+variable "lb_healthcheck_protocol" {
   description = "Protocol for LB to use when connecting health checks (default HTTP)"
   default     = "HTTP"
 }
 
-variable "alb_healthcheck_timeout" {
+variable "lb_healthcheck_timeout" {
   description = "Timeout in seconds for LB to use when connecting health checks (default 5)"
   default     = 5
 }
 
-variable "alb_healthcheck_healthy_threshold" {
+variable "lb_healthcheck_healthy_threshold" {
   description = "Number of consecutive successful health checks before marking service as healthy (default 5)"
   default     = 5
 }
 
-variable "alb_healthcheck_unhealthy_threshold" {
+variable "lb_healthcheck_unhealthy_threshold" {
   description = "Number of consecutive failed health checks before marking service as unhealthy (default 2)"
   default     = 5
 }
 
-variable "alb_healthcheck_matcher" {
+variable "lb_healthcheck_matcher" {
   description = "HTTP response codes to accept as healthy (default 200)"
   default     = "200-399"
 }
 
-variable "alb_cookie_duration" {
+variable "lb_cookie_duration" {
   description = "Duration of LB session stickiness cookie in seconds (default 86400)"
   default     = "86400"
 }
 
-variable "alb_stickiness_enabled" {
+variable "lb_stickiness_enabled" {
   description = "Enable LB session stickiness (default false)"
   default     = "false"
 }
@@ -247,7 +247,7 @@ variable "extra_task_policy_arns" {
 }
 
 variable "app_port" {
-  description = "Numeric port on which application listens (unnecessary if neither alb_enable_https or alb_enable_http are true)"
+  description = "Numeric port on which application listens (unnecessary if neither lb_enable_https or lb_enable_http are true)"
   type        = "string"
   default     = ""
 }

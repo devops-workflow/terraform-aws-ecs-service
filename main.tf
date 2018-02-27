@@ -26,9 +26,9 @@ module "label" {
 }
 
 locals {
-  lb_protocols   = "${var.alb_enable_http ? "HTTP" : ""},${var.alb_enable_https ? "HTTPS" : ""}"
+  lb_protocols   = "${var.lb_enable_http ? "HTTP" : ""},${var.lb_enable_https ? "HTTPS" : ""}"
   log_group_name = "ecs/${module.label.name}"
-  sg_rules       = "${var.alb_enable_http ? "http-80-tcp" : ""},${var.alb_enable_https ? "https-443-tcp" : ""}"
+  sg_rules       = "${var.lb_enable_http ? "http-80-tcp" : ""},${var.lb_enable_https ? "https-443-tcp" : ""}"
 }
 
 module "lb" {
@@ -46,7 +46,7 @@ module "lb" {
   certificate_name = "${var.acm_cert_domain}"
   lb_protocols     = "${compact(split(",", local.lb_protocols))}"
   internal         = "${var.lb_internal}"
-  subnets          = "${var.alb_subnet_ids}"
+  subnets          = "${var.lb_subnet_ids}"
 
   /*
   subnets               = "${split(",",
@@ -58,14 +58,14 @@ module "lb" {
   vpc_id                           = "${var.vpc_id}"
   security_groups                  = ["${module.sg-lb.id}"]
   type                             = "${var.lb_type}"
-  health_check_interval            = "${var.alb_healthcheck_interval}"
-  health_check_path                = "${var.alb_healthcheck_path}"
-  health_check_port                = "${var.alb_healthcheck_port}"
-  health_check_protocol            = "${var.alb_healthcheck_protocol}"
-  health_check_timeout             = "${var.alb_healthcheck_timeout}"
-  health_check_healthy_threshold   = "${var.alb_healthcheck_healthy_threshold}"
-  health_check_unhealthy_threshold = "${var.alb_healthcheck_unhealthy_threshold}"
-  health_check_matcher             = "${var.alb_healthcheck_matcher}"
+  health_check_interval            = "${var.lb_healthcheck_interval}"
+  health_check_path                = "${var.lb_healthcheck_path}"
+  health_check_port                = "${var.lb_healthcheck_port}"
+  health_check_protocol            = "${var.lb_healthcheck_protocol}"
+  health_check_timeout             = "${var.lb_healthcheck_timeout}"
+  health_check_healthy_threshold   = "${var.lb_healthcheck_healthy_threshold}"
+  health_check_unhealthy_threshold = "${var.lb_healthcheck_unhealthy_threshold}"
+  health_check_matcher             = "${var.lb_healthcheck_matcher}"
 }
 
 module "sg-lb" {
