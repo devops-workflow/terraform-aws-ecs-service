@@ -158,6 +158,7 @@ resource "aws_ecs_service" "service" {
 
   depends_on = [
     "aws_cloudwatch_log_group.task",
+    "aws_ecs_task_definition.task",
     "aws_iam_role.service",
     "module.lb",
   ]
