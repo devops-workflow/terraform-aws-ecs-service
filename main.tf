@@ -104,7 +104,7 @@ module "route53-aliases" {
 }
 
 data "template_file" "container_definition" {
-  count    = "${module.enabled.value && var.container_definition == "" ? 1 : 0}"
+  count    = "${module.enabled.value}"
   template = "${file("${path.module}/files/container_definition.json")}"
 
   vars {

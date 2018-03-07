@@ -184,6 +184,7 @@ variable "docker_command" {
 variable "docker_image" {
   description = "Docker image to use for task"
   type        = "string"
+  default     = ""
 }
 
 variable "docker_memory" {
