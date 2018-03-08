@@ -122,7 +122,7 @@ data "template_file" "container_definition" {
   }
 }
 
-resource "aws_ecs_task_definition" "task" {
+resource "aws_ecs_task_definition" "task_def" {
   count                 = "${module.enabled.value}"
   family                = "${module.label.id}"
   container_definitions = "${var.container_definition == "" ? data.template_file.container_definition.rendered : var.container_definition }"
@@ -139,7 +139,7 @@ resource "aws_ecs_service" "service" {
   count                              = "${module.enabled.value}"
   name                               = "${module.label.name}"
   cluster                            = "${var.ecs_cluster_arn}"
-  task_definition                    = "${aws_ecs_task_definition.task.arn}"
+  task_definition                    = "${aws_ecs_task_definition.task_def.arn}"
   desired_count                      = "${var.ecs_desired_count}"
   iam_role                           = "${aws_iam_role.service.arn}"
   deployment_maximum_percent         = "${var.ecs_deployment_maximum_percent}"
@@ -158,7 +158,7 @@ resource "aws_ecs_service" "service" {
 
   depends_on = [
     "aws_cloudwatch_log_group.task",
-    "aws_ecs_task_definition.task",
+    "aws_ecs_task_definition.task_def",
     "aws_iam_role.service",
     "module.lb",
   ]
