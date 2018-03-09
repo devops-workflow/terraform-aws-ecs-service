@@ -20,5 +20,6 @@
                "awslogs-stream-prefix": "${awslogs_stream_prefix}"
             }
         }
+        ${additional_config}
     }
 ]

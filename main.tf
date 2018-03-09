@@ -103,6 +103,7 @@ module "route53-aliases" {
   evaluate_target_health = true
 }
 
+# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#container_definitions
 data "template_file" "container_definition" {
   count    = "${module.enabled.value}"
   template = "${file("${path.module}/files/container_definition.json")}"
@@ -119,27 +120,31 @@ data "template_file" "container_definition" {
     awslogs_group         = "${local.log_group_name}"
     awslogs_region        = "${var.region}"
     awslogs_stream_prefix = "${module.label.environment}"
+    additional_config     = "${var.container_definition_additional == "" ? "" :
+      ",${var.container_definition_additional}"}"
   }
 }
 
-resource "aws_ecs_task_definition" "task_def" {
+# FIX: resource cannot be found when passing in container_definition, if def bad, wrong format, etc.
+resource "aws_ecs_task_definition" "task" {
   count                 = "${module.enabled.value}"
   family                = "${module.label.id}"
   container_definitions = "${var.container_definition == "" ? data.template_file.container_definition.rendered : var.container_definition }"
   network_mode          = "${var.network_mode}"
   task_role_arn         = "${aws_iam_role.task.arn}"
 
-  volume {
+  volume = "${var.docker_volumes}"
+  /*volume {
     name      = "data"
     host_path = "${var.ecs_data_volume_path}"
-  }
+  }*/
 }
 
 resource "aws_ecs_service" "service" {
   count                              = "${module.enabled.value}"
   name                               = "${module.label.name}"
   cluster                            = "${var.ecs_cluster_arn}"
-  task_definition                    = "${aws_ecs_task_definition.task_def.arn}"
+  task_definition                    = "${aws_ecs_task_definition.task.arn}"
   desired_count                      = "${var.ecs_desired_count}"
   iam_role                           = "${aws_iam_role.service.arn}"
   deployment_maximum_percent         = "${var.ecs_deployment_maximum_percent}"
@@ -158,7 +163,7 @@ resource "aws_ecs_service" "service" {
 
   depends_on = [
     "aws_cloudwatch_log_group.task",
-    "aws_ecs_task_definition.task_def",
+    "aws_ecs_task_definition.task",
     "aws_iam_role.service",
     "module.lb",
   ]

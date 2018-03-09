@@ -181,6 +181,12 @@ variable "docker_command" {
   default     = ""
 }
 
+variable "docker_environment" {
+  description = "List of environment maps of format { \"name\" = \"var_name\", \"value\" = \"var_value\" }"
+  type        = "list"
+  default     = []
+}
+
 variable "docker_image" {
   description = "Docker image to use for task"
   type        = "string"
@@ -209,15 +215,15 @@ variable "docker_mount_points" {
   default     = []
 }
 
+variable "docker_volumes" {
+  description = "List of volume maps of format { \"name\" = \"var_name\", \"host_path\" = \"var_value\" }"
+  type        = "list"
+  default     = []
+}
+
 variable "ecs_data_volume_path" {
   description = "Path to volume on ECS node to be defined as a \"data\" volume (default \"/opt/data\")"
   default     = "/opt/data"
-}
-
-variable "docker_environment" {
-  description = "List of environment maps of format { \"name\" = \"var_name\", \"value\" = \"var_value\" }"
-  type        = "list"
-  default     = []
 }
 
 variable "network_mode" {
@@ -280,5 +286,10 @@ variable "ecs_log_retention" {
 
 variable "container_definition" {
   description = "Container definition when not using module default definition"
+  default     = ""
+}
+
+variable "container_definition_additional" {
+  description = "Additional parameters to add to container definition. This is a json substring"
   default     = ""
 }
