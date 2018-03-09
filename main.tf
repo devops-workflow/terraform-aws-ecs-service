@@ -116,7 +116,7 @@ data "template_file" "container_definition" {
     app_port              = "${var.app_port}"
     command_override      = "${length(var.docker_command) > 0 ? "\"command\": [\"${var.docker_command}\"]," : ""}"
     environment           = "${jsonencode(var.docker_environment)}"
-    mount_points          = "${jsonencode(var.docker_mount_points)}"
+    mount_points          = "${replace(jsonencode(var.docker_mount_points), "\"true\"", true)}"
     awslogs_group         = "${local.log_group_name}"
     awslogs_region        = "${var.region}"
     awslogs_stream_prefix = "${module.label.environment}"
@@ -125,19 +125,15 @@ data "template_file" "container_definition" {
   }
 }
 
-# FIX: resource cannot be found when passing in container_definition, if def bad, wrong format, etc.
+# FIX: resource cannot be found if it fails
+#   when passing in container_definition, if def bad, wrong format, invalid arg, etc.
 resource "aws_ecs_task_definition" "task" {
   count                 = "${module.enabled.value}"
   family                = "${module.label.id}"
-  container_definitions = "${var.container_definition == "" ? data.template_file.container_definition.rendered : var.container_definition }"
+  container_definitions = "${var.container_definition == "" ? element(data.template_file.container_definition.*.rendered, 0) : var.container_definition }"
   network_mode          = "${var.network_mode}"
   task_role_arn         = "${aws_iam_role.task.arn}"
-
-  volume = "${var.docker_volumes}"
-  /*volume {
-    name      = "data"
-    host_path = "${var.ecs_data_volume_path}"
-  }*/
+  volume                = "${var.docker_volumes}"
 }
 
 resource "aws_ecs_service" "service" {

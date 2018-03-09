@@ -28,3 +28,8 @@ output "service_iam_role_name" {
   description = "Name of the IAM Role for the ECS Task"
   value       = "${aws_iam_role.service.name}"
 }
+
+output "container_json" {
+  description = ""
+  value = "${element(data.template_file.container_definition.*.rendered, 0)}"
+}
