@@ -4,11 +4,7 @@
         "image": "${image}",
         "memory": ${memory},
         "memoryReservation": ${memory_reservation},
-        "portMappings": [
-          {
-            "containerPort": ${app_port}
-          }
-        ],
+        "portMappings": ${port_mappings},
         ${command_override}
         "environment": ${environment},
         "mountPoints": ${mount_points},
