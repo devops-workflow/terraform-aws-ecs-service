@@ -11,6 +11,12 @@ module "enabled" {
   value   = "${var.enabled}"
 }
 
+module "enable_lb" {
+  source  = "devops-workflow/boolean/local"
+  version = "0.1.1"
+  value   = "${var.enable_lb}"
+}
+
 # Define composite variables for resources
 module "label" {
   source        = "devops-workflow/label/local"
@@ -34,7 +40,7 @@ locals {
 module "lb" {
   source           = "devops-workflow/lb/aws"
   version          = "3.0.3"
-  enabled          = "${module.enabled.value}"
+  enabled          = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
   name             = "${module.label.name}"
   attributes       = "${var.attributes}"
   delimiter        = "${var.delimiter}"
@@ -71,7 +77,7 @@ module "lb" {
 module "sg-lb" {
   source              = "devops-workflow/security-group/aws"
   version             = "2.0.0"
-  enabled             = "${module.enabled.value}"
+  enabled             = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
   name                = "${module.label.name}"
   attributes          = "${var.attributes}"
   delimiter           = "${var.delimiter}"
@@ -84,7 +90,7 @@ module "sg-lb" {
   vpc_id              = "${var.vpc_id}"
   egress_cidr_blocks  = ["0.0.0.0/0"]
   egress_rules        = ["all-all"]
-  ingress_cidr_blocks = ["10.0.0.0/8"]                             # "${var.allowed_cidr_blocks}"
+  ingress_cidr_blocks = ["10.0.0.0/8"]                                              # "${var.allowed_cidr_blocks}"
   ingress_rules       = "${compact(split(",", local.sg_rules))}"
 }
 
@@ -95,7 +101,7 @@ module "route53-aliases" {
   #source                  = "git::https://github.com/devops-workflow/terraform-aws-route53-alias.git"
   source                 = "devops-workflow/route53-alias/aws"
   version                = "0.2.4"
-  enabled                = "${module.enabled.value}"
+  enabled                = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
   aliases                = "${compact(concat(list(module.label.name), var.dns_aliases))}"
   parent_zone_name       = "${var.environment}.${var.organization}.com."
   target_dns_name        = "${module.lb.dns_name}"
@@ -109,10 +115,11 @@ data "template_file" "container_definition" {
   template = "${file("${path.module}/files/container_definition.json")}"
 
   vars {
-    name                  = "${module.label.name}"
-    image                 = "${var.docker_image}"
-    memory                = "${var.docker_memory}"
-    memory_reservation    = "${var.docker_memory_reservation}"
+    name               = "${module.label.name}"
+    image              = "${var.docker_image}"
+    memory             = "${var.docker_memory}"
+    memory_reservation = "${var.docker_memory_reservation}"
+
     #app_port              = "${var.app_port}"
     port_mappings         = "${replace(jsonencode(var.docker_port_mappings), "/\"([0-9]+)\"/", "$1")}"
     command_override      = "${length(var.docker_command) > 0 ? "\"command\": [\"${var.docker_command}\"]," : ""}"
@@ -137,8 +144,8 @@ resource "aws_ecs_task_definition" "task" {
   volume                = "${var.docker_volumes}"
 }
 
-resource "aws_ecs_service" "service" {
-  count                              = "${module.enabled.value}"
+resource "aws_ecs_service" "service-no-lb" {
+  count                              = "${module.enabled.value && ! module.enable_lb.value ? 1 : 0}"
   name                               = "${module.label.name}"
   cluster                            = "${var.ecs_cluster_arn}"
   task_definition                    = "${aws_ecs_task_definition.task.arn}"
@@ -152,7 +159,29 @@ resource "aws_ecs_service" "service" {
     field = "${var.ecs_placement_strategy_field}"
   }
 
-  load_balancer {
+  depends_on = [
+    "aws_cloudwatch_log_group.task",
+    "aws_ecs_task_definition.task",
+    "aws_iam_role.service",
+  ]
+}
+
+resource "aws_ecs_service" "service" {
+  count                              = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
+  name                               = "${module.label.name}"
+  cluster                            = "${var.ecs_cluster_arn}"
+  task_definition                    = "${aws_ecs_task_definition.task.arn}"
+  desired_count                      = "${var.ecs_desired_count}"
+  iam_role                           = "${aws_iam_role.service.arn}"
+  deployment_maximum_percent         = "${var.ecs_deployment_maximum_percent}"
+  deployment_minimum_healthy_percent = "${var.ecs_deployment_minimum_healthy_percent}"
+
+  placement_strategy {
+    type  = "${var.ecs_placement_strategy_type}"
+    field = "${var.ecs_placement_strategy_field}"
+  }
+
+  load_balancer = {
     target_group_arn = "${element(module.lb.target_group_arns, 0)}"
     container_name   = "${module.label.name}"
     container_port   = "${var.app_port}"

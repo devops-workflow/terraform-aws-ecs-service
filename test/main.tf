@@ -65,17 +65,21 @@ module "service-1" {
   lb_subnet_ids = ["${data.aws_subnet_ids.private_subnet_ids.ids}"]
   region        = "${var.region}"
 
+  enable_lb      = false
   lb_enable_http = true
   lb_internal    = true
+
   docker_environment = "${list(
     map("name", "DD_API_KEY", "value", "dd_api_key"),
     map("name", "SD_BACKEND", "value", "docker")
     )}"
+
   docker_mount_points = "${list(
     map("containerPath", "/var/run/docker.sock", "sourceVolume", "docker_sock"),
     map("containerPath", "/host/sys/fs/cgroup",  "sourceVolume", "cgroup", "readOnly", "true"),
     map("containerPath", "/host/proc",           "sourceVolume", "proc", "readOnly", "true")
     )}"
+
   docker_volumes = "${list(
     map("name", "docker_sock", "host_path", "/var/run/docker.sock"),
     map("name", "proc",        "host_path", "/proc/"),

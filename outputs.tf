@@ -31,5 +31,5 @@ output "service_iam_role_name" {
 
 output "container_json" {
   description = ""
-  value = "${element(data.template_file.container_definition.*.rendered, 0)}"
+  value       = "${element(data.template_file.container_definition.*.rendered, 0)}"
 }

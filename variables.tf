@@ -149,6 +149,11 @@ variable "enabled" {
   default     = true
 }
 
+variable "enable_lb" {
+  description = "Set to false to prevent the module from creating a Load Balancer"
+  default     = true
+}
+
 variable "region" {
   description = "AWS region in which ECS cluster is located (default is 'us-east-1')"
   type        = "string"
