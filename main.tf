@@ -152,12 +152,16 @@ resource "aws_ecs_service" "service-no-lb" {
   desired_count                      = "${var.ecs_desired_count}"
   deployment_maximum_percent         = "${var.ecs_deployment_maximum_percent}"
   deployment_minimum_healthy_percent = "${var.ecs_deployment_minimum_healthy_percent}"
-
+  placement_constraints = "${var.ecs_placement_constraints}"
   placement_strategy {
     type  = "${var.ecs_placement_strategy_type}"
     field = "${var.ecs_placement_strategy_field}"
   }
-
+  /*
+  placement_constraints {
+    type = "${var.ecs_placement_constraint_type}"
+  }
+*/
   depends_on = [
     "aws_cloudwatch_log_group.task",
     "aws_ecs_task_definition.task",
@@ -174,6 +178,7 @@ resource "aws_ecs_service" "service" {
   iam_role                           = "${aws_iam_role.service.arn}"
   deployment_maximum_percent         = "${var.ecs_deployment_maximum_percent}"
   deployment_minimum_healthy_percent = "${var.ecs_deployment_minimum_healthy_percent}"
+  placement_constraints = "${var.ecs_placement_constraints}"
 
   placement_strategy {
     type  = "${var.ecs_placement_strategy_type}"

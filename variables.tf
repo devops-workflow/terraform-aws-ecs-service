@@ -274,6 +274,12 @@ variable "ecs_deployment_minimum_healthy_percent" {
   default     = "100"
 }
 
+variable "ecs_placement_constraints" {
+  description = "Placement contraints to use when distributing tasks"
+  type        = "list"
+  default     = []
+}
+
 variable "ecs_placement_strategy_type" {
   description = "Placement strategy to use when distributing tasks (default binpack)"
   default     = "binpack"
