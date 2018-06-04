@@ -220,6 +220,11 @@ variable "docker_mount_points" {
   default     = []
 }
 
+variable "docker_registry" {
+  description = "Docker register for image"
+  default     = ""
+}
+
 variable "docker_volumes" {
   description = "List of volume maps of format { \"name\" = \"var_name\", \"host_path\" = \"var_value\" }"
   type        = "list"

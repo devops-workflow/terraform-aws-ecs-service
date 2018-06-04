@@ -116,7 +116,7 @@ data "template_file" "container_definition" {
 
   vars {
     name               = "${module.label.name}"
-    image              = "${var.docker_image}"
+    image              = "${var.docker_registry != "" ? "${var.docker_registry}/${var.docker_image}" : var.docker_image}"
     memory             = "${var.docker_memory}"
     memory_reservation = "${var.docker_memory_reservation}"
 
@@ -138,7 +138,7 @@ data "template_file" "container_definition" {
 resource "aws_ecs_task_definition" "task" {
   count                 = "${module.enabled.value}"
   family                = "${module.label.id}"
-  container_definitions = "${var.container_definition == "" ? element(data.template_file.container_definition.*.rendered, 0) : var.container_definition }"
+  container_definitions = "${var.container_definition == "" ? element(concat(data.template_file.container_definition.*.rendered, list("")), 0) : var.container_definition }"
   network_mode          = "${var.network_mode}"
   task_role_arn         = "${aws_iam_role.task.arn}"
   volume                = "${var.docker_volumes}"
