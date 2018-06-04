@@ -60,7 +60,8 @@ module "service-1" {
 
   #docker_registry = "105667981759.dkr.ecr.us-west-2.amazonaws.com/wiser"
   #docker_image    = "map-application:latest"
-  docker_image  = "infrastructureascode/hello-world:latest"
+  docker_image = "infrastructureascode/hello-world:latest"
+
   vpc_id        = "${data.aws_vpc.vpc.id}"
   app_port      = 8080                                              # target group & container port
   lb_subnet_ids = ["${data.aws_subnet_ids.private_subnet_ids.ids}"]
