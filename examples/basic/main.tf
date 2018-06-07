@@ -9,7 +9,7 @@ module "ecs-cluster" {
 }
 
 module "basic" {
-  source                = "../"
+  source                = "../../"
   name                  = "basic"
   ecs_cluster_arn       = "${module.ecs-cluster.cluster_id}"
   ecs_security_group_id = "${module.ecs-cluster.cluster_security_group_id}"

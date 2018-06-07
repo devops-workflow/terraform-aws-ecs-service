@@ -23,7 +23,7 @@ module "efs_service_2" {
 }
 
 data "template_file" "extra_user_data" {
-  template = "${file("${path.module}/templates/userdata-nfs-dd.sh")}"
+  template = "${file("${path.module}/templates/userdata-nfs.sh")}"
 
   vars {
     mounts = "${module.efs_service_1.dns_name}:${module.efs_service_1.name} ${module.efs_service_2.dns_name}:${module.efs_service_2.name}"
@@ -68,7 +68,7 @@ resource "aws_security_group_rule" "ecs-cluster-efs-service-2" {
 
 # TODO: setup services that mount EFS
 module "basic" {
-  source                = "../"
+  source                = "../../"
   name                  = "basic"
   ecs_cluster_arn       = "${module.ecs-cluster.cluster_id}"
   ecs_security_group_id = "${module.ecs-cluster.cluster_security_group_id}"

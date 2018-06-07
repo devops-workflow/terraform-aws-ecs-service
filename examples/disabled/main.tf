@@ -1,5 +1,5 @@
 module "disabled" {
-  source      = "../"
+  source      = "../../"
   enabled     = false
   name        = "disabled"
   environment = "one"
