@@ -1,9 +1,9 @@
 ECS Service: EFS
 ======================================
 
-Configuration in this directory sets up EFS, mounts it on ECS' EC2 instances, and defines service mounting it.
+Configuration in this directory sets up multiple EFS, mounts them on ECS' EC2 instances, and configures service to mount.
 
-TODO
+# TODO
 
 Usage
 =====

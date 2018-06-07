@@ -1,7 +1,7 @@
 ECS Service: Basic
 ======================================
 
-Configuration in this directory setups a service with a load balancer
+Configuration in this directory sets up an ECS cluster and 1 service with a load balancer
 
 Usage
 =====
