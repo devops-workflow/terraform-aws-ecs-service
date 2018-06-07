@@ -3,7 +3,7 @@ module "efs_service_1" {
   version      = "0.5.0"
   name         = "service-1"
   attributes   = ["efs"]
-  environment  = "${var.env}"
+  environment  = "${var.environment}"
   region       = "${var.region}"
   vpc_id       = "${data.aws_vpc.vpc.id}"
   subnets      = "${data.aws_subnet_ids.private_subnet_ids.ids}"
@@ -15,7 +15,7 @@ module "efs_service_2" {
   version      = "0.5.0"
   name         = "service-2"
   attributes   = ["efs"]
-  environment  = "${var.env}"
+  environment  = "${var.environment}"
   region       = "${var.region}"
   vpc_id       = "${data.aws_vpc.vpc.id}"
   subnets      = "${data.aws_subnet_ids.private_subnet_ids.ids}"
@@ -33,7 +33,7 @@ data "template_file" "extra_user_data" {
 module "ecs-cluster" {
   source        = "git::https://github.com/devops-workflow/terraform-aws-ecs-cluster.git"
   name          = "ecs-1"
-  environment   = "one"
+  environment   = "${var.environment}"
   instance_type = "${var.instance_type}"
   key_name      = "${var.key_name}"
 
@@ -66,13 +66,13 @@ resource "aws_security_group_rule" "ecs-cluster-efs-service-2" {
   source_security_group_id = "${module.ecs-cluster.cluster_security_group_id}"
 }
 
-# TODO: setup services that mount EFS 
+# TODO: setup services that mount EFS
 module "basic" {
   source                = "../"
   name                  = "basic"
   ecs_cluster_arn       = "${module.ecs-cluster.cluster_id}"
   ecs_security_group_id = "${module.ecs-cluster.cluster_security_group_id}"
-  environment           = "one"
+  environment           = "${var.environment}"
   organization          = "wiser"
 
   #docker_registry = "105667981759.dkr.ecr.us-west-2.amazonaws.com/wiser"

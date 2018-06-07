@@ -2,7 +2,8 @@
 ### Mount EFS volumes
 ###
 # Can switch to using AWS' EFS helper
-#
+#   yum -y install amazon-efs-utils
+#   mount -t efs
 
 # mounts is a list of "host:service"
 if ! rpm -qa | grep -qw nfs-utils; then
