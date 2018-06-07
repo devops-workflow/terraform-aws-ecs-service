@@ -42,6 +42,8 @@ module "ecs-cluster" {
   environment                 = "${var.environment}"
   instance_type               = "${var.instance_type}"
   key_name                    = "${var.key_name}"
+  min_servers                 = "2"
+  servers                     = "2"
   subnet_id                   = ["${data.aws_subnet_ids.private_subnet_ids.ids}"]
   vpc_id                      = "${data.aws_vpc.vpc.id}"
   additional_user_data_script = "${data.template_file.extra_user_data.rendered}"
@@ -71,7 +73,6 @@ resource "aws_security_group_rule" "ecs-cluster-efs-service-2" {
 //
 // ECS Services
 //
-# TODO: setup services that mount EFS
 module "basic" {
   source                = "../../"
   name                  = "basic"
@@ -90,4 +91,48 @@ module "basic" {
   lb_subnet_ids  = ["${data.aws_subnet_ids.private_subnet_ids.ids}"]
   region         = "${var.region}"
   vpc_id         = "${data.aws_vpc.vpc.id}"
+
+  docker_port_mappings = "${list(
+    map("containerPort", 8080, "hostPort", 8080, "protocol", "tcp")
+    )}"
+
+  docker_mount_points = "${list(
+    map("containerPath", "/mnt/efs", "sourceVolume", "efs")
+    )}"
+
+  docker_volumes = "${list(
+    map("name", "efs", "host_path", "/mnt/efs/${module.efs_service_1.name}")
+    )}"
+}
+
+module "basic_2" {
+  source                = "../../"
+  name                  = "basic-2"
+  ecs_cluster_arn       = "${module.ecs-cluster.cluster_id}"
+  ecs_security_group_id = "${module.ecs-cluster.cluster_security_group_id}"
+  environment           = "${var.environment}"
+  organization          = "wiser"
+
+  #docker_registry = "105667981759.dkr.ecr.us-west-2.amazonaws.com/wiser"
+  #docker_image    = "map-application:latest"
+  docker_image = "infrastructureascode/hello-world:latest"
+
+  app_port       = 8080                                              # target group & container port
+  lb_enable_http = true
+  lb_internal    = true
+  lb_subnet_ids  = ["${data.aws_subnet_ids.private_subnet_ids.ids}"]
+  region         = "${var.region}"
+  vpc_id         = "${data.aws_vpc.vpc.id}"
+
+  docker_port_mappings = "${list(
+    map("containerPort", 8080, "hostPort", 8080, "protocol", "tcp")
+    )}"
+
+  docker_mount_points = "${list(
+    map("containerPath", "/mnt/efs", "sourceVolume", "efs")
+    )}"
+
+  docker_volumes = "${list(
+    map("name", "efs", "host_path", "/mnt/efs/${module.efs_service_2.name}")
+    )}"
 }
