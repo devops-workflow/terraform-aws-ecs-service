@@ -37,16 +37,12 @@ data "template_file" "extra_user_data" {
 }
 
 module "ecs-cluster" {
-  source        = "git::https://github.com/devops-workflow/terraform-aws-ecs-cluster.git"
-  name          = "ecs-1"
-  environment   = "${var.environment}"
-  instance_type = "${var.instance_type}"
-  key_name      = "${var.key_name}"
-
-  #min_servers   = "${local.size}"
-  #servers   = "${local.size}"
-  subnet_id = ["${data.aws_subnet_ids.private_subnet_ids.ids}"]
-
+  source                      = "git::https://github.com/devops-workflow/terraform-aws-ecs-cluster.git"
+  name                        = "ecs-1"
+  environment                 = "${var.environment}"
+  instance_type               = "${var.instance_type}"
+  key_name                    = "${var.key_name}"
+  subnet_id                   = ["${data.aws_subnet_ids.private_subnet_ids.ids}"]
   vpc_id                      = "${data.aws_vpc.vpc.id}"
   additional_user_data_script = "${data.template_file.extra_user_data.rendered}"
 }

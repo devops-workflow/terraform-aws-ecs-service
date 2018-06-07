@@ -20,7 +20,7 @@ module "enable_lb" {
 # Define composite variables for resources
 module "label" {
   source        = "devops-workflow/label/local"
-  version       = "0.1.3"
+  version       = "0.2.1"
   name          = "${var.name}"
   attributes    = "${var.attributes}"
   delimiter     = "${var.delimiter}"
@@ -39,7 +39,7 @@ locals {
 
 module "lb" {
   source           = "devops-workflow/lb/aws"
-  version          = "3.0.3"
+  version          = "3.4.1"
   enabled          = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
   name             = "${module.label.name}"
   attributes       = "${var.attributes}"
@@ -76,7 +76,7 @@ module "lb" {
 
 module "sg-lb" {
   source              = "devops-workflow/security-group/aws"
-  version             = "2.0.0"
+  version             = "2.1.0"
   enabled             = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
   name                = "${module.label.name}"
   attributes          = "${var.attributes}"
