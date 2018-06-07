@@ -1,6 +1,9 @@
+//
+// EFS setup
+//
 module "efs_service_1" {
   source       = "devops-workflow/efs/aws"
-  version      = "0.5.0"
+  version      = "0.6.1"
   name         = "service-1"
   attributes   = ["efs"]
   environment  = "${var.environment}"
@@ -12,7 +15,7 @@ module "efs_service_1" {
 
 module "efs_service_2" {
   source       = "devops-workflow/efs/aws"
-  version      = "0.5.0"
+  version      = "0.6.1"
   name         = "service-2"
   attributes   = ["efs"]
   environment  = "${var.environment}"
@@ -22,6 +25,9 @@ module "efs_service_2" {
   ingress_cidr = "${data.aws_subnet.private_subnets.*.cidr_block}"
 }
 
+//
+// ECS cluster setup
+//
 data "template_file" "extra_user_data" {
   template = "${file("${path.module}/templates/userdata-nfs.sh")}"
 
@@ -66,6 +72,9 @@ resource "aws_security_group_rule" "ecs-cluster-efs-service-2" {
   source_security_group_id = "${module.ecs-cluster.cluster_security_group_id}"
 }
 
+//
+// ECS Services
+//
 # TODO: setup services that mount EFS
 module "basic" {
   source                = "../../"
