@@ -39,7 +39,7 @@ locals {
 
 module "lb" {
   source           = "devops-workflow/lb/aws"
-  version          = "3.4.1"
+  version          = "3.50.0"
   enabled          = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
   name             = "${module.label.name}"
   attributes       = "${var.attributes}"
