@@ -76,7 +76,7 @@ module "lb" {
 
 module "sg-lb" {
   source              = "devops-workflow/security-group/aws"
-  version             = "2.1.0"
+  version             = "2.2.0"
   enabled             = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
   name                = "${module.label.name}"
   attributes          = "${var.attributes}"
