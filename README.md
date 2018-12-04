@@ -1,11 +1,10 @@
-[![CircleCI](https://circleci.com/gh/devops-workflow/terraform-aws-ecs-service/tree/master.svg?style=svg)](https://circleci.com/gh/devops-workflow/terraform-aws-ecs-service/tree/master)
+# terraform-aws-ecs-service
 
-terraform-aws-ecs-service
-===========
+[![CircleCI](https://circleci.com/gh/devops-workflow/terraform-aws-ecs-service/tree/master.svg?style=svg)](https://circleci.com/gh/devops-workflow/terraform-aws-ecs-service/tree/master)
+[![Github release](https://img.shields.io/github/release/devops-workflow/terraform-aws-ecs-service.svg)](https://github.com/devops-workflow/terraform-aws-ecs-service/releases)
 
 Terraform module for deploying and managing a generic [ECS](https://aws.amazon.com/ecs/) service onto an existing cluster.
 
-----------------------
 #### Required
 - `region` - AWS region in which the EC2 Container Service cluster is located
 - `ecs_cluster` - EC2 Container Service cluster in which the service will be deployed (must already exist, the module will not create it).
@@ -13,8 +12,7 @@ Terraform module for deploying and managing a generic [ECS](https://aws.amazon.c
 - `task_identifier` - Unique identifier for the task, used in naming resources.
 - `docker_image` - Docker image specification.
 
-Usage
------
+## Usage
 
 ```hcl
 
@@ -35,26 +33,18 @@ module "pganalyze_testdb" {
 }
 ```
 
-Outputs
-=======
-
-FIXME there are some outputs
-
-Authors
-=======
+### Authors
 
 [Steve Huff](https://github.com/hakamadare)
 [Tim Hartmann](https://github.com/tfhartmann)
 
-Changelog
-=========
+### Changelog
 
 2.1.0 - IAM role outputs.
 
 1.0.0 - Initial release.
 
-License
-=======
+### License
 
 This software is released under the MIT License (see `LICENSE`).
 
