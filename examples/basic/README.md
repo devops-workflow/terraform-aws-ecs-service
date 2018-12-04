@@ -2,7 +2,7 @@
 
 Configuration in this directory sets up an ECS cluster and 1 service with a load balancer
 
-# Usage
+## Usage
 
 To run this example you need to execute:
 

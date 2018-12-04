@@ -5,7 +5,8 @@
 
 Terraform module for deploying and managing a generic [ECS](https://aws.amazon.com/ecs/) service onto an existing cluster.
 
-#### Required
+## Required
+
 - `region` - AWS region in which the EC2 Container Service cluster is located
 - `ecs_cluster` - EC2 Container Service cluster in which the service will be deployed (must already exist, the module will not create it).
 - `service_identifier` - Unique identifier for the service, used in naming resources.
