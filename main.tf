@@ -52,6 +52,7 @@ module "lb" {
   certificate_name = "${var.acm_cert_domain}"
   lb_protocols     = "${compact(split(",", local.lb_protocols))}"
   internal         = "${var.lb_internal}"
+  ports            = "${var.lb_ports}"
   subnets          = "${var.lb_subnet_ids}"
 
   /*

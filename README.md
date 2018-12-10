@@ -96,6 +96,7 @@ This software is released under the MIT License (see `LICENSE`).
 | lb\_healthcheck\_timeout | Timeout in seconds for LB to use when connecting health checks (default 5) | string | `5` | no |
 | lb\_healthcheck\_unhealthy\_threshold | Number of consecutive failed health checks before marking service as unhealthy (default 2) | string | `5` | no |
 | lb\_internal | Configure LB as internal-only | string | `true` | no |
+| lb\_ports | Ports load balancer should listen on | string | `80` | no |
 | lb\_stickiness\_enabled | Enable LB session stickiness (default false) | string | `false` | no |
 | lb\_subnet\_ids | VPC subnet IDs in which to create the LB (unnecessary if neither lb_enable_https or lb_enable_http are true) | list | `<list>` | no |
 | lb\_type | Type of LB to create: application, network | string | `application` | no |

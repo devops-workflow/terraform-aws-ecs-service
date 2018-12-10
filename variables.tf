@@ -125,6 +125,11 @@ variable "lb_cookie_duration" {
   default     = "86400"
 }
 
+variable "lb_ports" {
+  description = "Ports load balancer should listen on"
+  default     = "80"
+}
+
 variable "lb_stickiness_enabled" {
   description = "Enable LB session stickiness (default false)"
   default     = "false"
