@@ -125,6 +125,11 @@ variable "lb_cookie_duration" {
   default     = "86400"
 }
 
+variable "lb_https_ports" {
+  description = "HTTPS ports load balancer should listen on"
+  default     = "443"
+}
+
 variable "lb_ports" {
   description = "Ports load balancer should listen on"
   default     = "80"

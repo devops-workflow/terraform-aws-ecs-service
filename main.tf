@@ -53,6 +53,7 @@ module "lb" {
   lb_protocols     = "${compact(split(",", local.lb_protocols))}"
   internal         = "${var.lb_internal}"
   ports            = "${var.lb_ports}"
+  lb_https_ports   = "${var.lb_https_ports}"
   subnets          = "${var.lb_subnet_ids}"
 
   /*
