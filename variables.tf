@@ -130,6 +130,12 @@ variable "lb_https_ports" {
   default     = "443"
 }
 
+variable "lb_ingress_cidr_blocks" {
+  description = "List of ingress CIDR blocks for load balancer"
+  type        = "list"
+  default     = ["10.0.0.0/8"]
+}
+
 variable "lb_ports" {
   description = "Ports load balancer should listen on"
   default     = "80"

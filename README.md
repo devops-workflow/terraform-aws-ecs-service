@@ -96,6 +96,7 @@ This software is released under the MIT License (see `LICENSE`).
 | lb\_healthcheck\_timeout | Timeout in seconds for LB to use when connecting health checks (default 5) | string | `5` | no |
 | lb\_healthcheck\_unhealthy\_threshold | Number of consecutive failed health checks before marking service as unhealthy (default 2) | string | `5` | no |
 | lb\_https\_ports | HTTPS ports load balancer should listen on | string | `443` | no |
+| lb\_ingress\_cidr\_blocks | List of ingress CIDR blocks for load balancer | list | `<list>` | no |
 | lb\_internal | Configure LB as internal-only | string | `true` | no |
 | lb\_ports | Ports load balancer should listen on | string | `80` | no |
 | lb\_stickiness\_enabled | Enable LB session stickiness (default false) | string | `false` | no |
