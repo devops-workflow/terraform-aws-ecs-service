@@ -92,7 +92,7 @@ module "sg-lb" {
   vpc_id              = "${var.vpc_id}"
   egress_cidr_blocks  = ["0.0.0.0/0"]
   egress_rules        = ["all-all"]
-  ingress_cidr_blocks = ["${lb_ingress_cidr_blocks}"]                               # "${var.allowed_cidr_blocks}"
+  ingress_cidr_blocks = ["${var.lb_ingress_cidr_blocks}"]                           # "${var.allowed_cidr_blocks}"
   ingress_rules       = "${compact(split(",", local.sg_rules))}"
 }
 
