@@ -61,6 +61,7 @@ This software is released under the MIT License (see `LICENSE`).
 | container\_definition\_additional | Additional parameters to add to container definition. This is a json substring | string | `` | no |
 | delimiter | Delimiter to be used between `name`, `namespaces`, `attributes`, etc. | string | `-` | no |
 | dns\_aliases | Additional DNS names | list | `<list>` | no |
+| dns\_parent\_zone\_name | DNS name of the parent zone to put this in | string | `` | no |
 | docker\_command | String to override CMD in Docker container (default "") | string | `` | no |
 | docker\_environment | List of environment maps of format { "name" = "var_name", "value" = "var_value" } | list | `<list>` | no |
 | docker\_image | Docker image to use for task | string | `` | no |

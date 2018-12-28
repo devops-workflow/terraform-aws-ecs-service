@@ -101,11 +101,16 @@ module "sg-lb" {
 # DNS for LB
 module "route53-aliases" {
   #source                  = "git::https://github.com/devops-workflow/terraform-aws-route53-alias.git"
-  source                 = "devops-workflow/route53-alias/aws"
-  version                = "0.2.4"
-  enabled                = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
-  aliases                = "${compact(concat(list(module.label.name), var.dns_aliases))}"
-  parent_zone_name       = "${module.label.environment}.${module.label.organization}.com."
+  source  = "devops-workflow/route53-alias/aws"
+  version = "0.2.4"
+  enabled = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
+  aliases = "${compact(concat(list(module.label.name), var.dns_aliases))}"
+
+  parent_zone_name = "${var.dns_parent_zone_name != "" ?
+    "${var.dns_parent_zone_name}" :
+    "${module.label.environment}.${module.label.organization}.com."
+    }"
+
   target_dns_name        = "${module.lb.dns_name}"
   target_zone_id         = "${module.lb.zone_id}"
   evaluate_target_health = true

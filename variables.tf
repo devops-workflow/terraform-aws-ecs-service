@@ -50,6 +50,11 @@ variable "dns_aliases" {
   default     = []
 }
 
+variable "dns_parent_zone_name" {
+  description = "DNS name of the parent zone to put this in"
+  default     = ""
+}
+
 //
 // Variables specific to LB module
 //
