@@ -1,5 +1,8 @@
-/**/
-# TODO: Add these
+output "lb_dns_aliases" {
+  description = "List of DNS aliases add for ALB"
+  value       = "${module.route53-aliases.hostnames}"
+}
+
 output "lb_dns_name" {
   description = "FQDN of ALB provisioned for service (if present)"
   value       = "${module.lb.dns_name}"
@@ -10,7 +13,6 @@ output "lb_zone_id" {
   value       = "${module.lb.zone_id}"
 }
 
-/**/
 output "task_iam_role_arn" {
   description = "ARN of the IAM Role for the ECS Task"
   value       = "${element(concat(aws_iam_role.task.*.arn, list("")), 0)}"
