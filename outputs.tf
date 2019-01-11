@@ -1,35 +1,37 @@
-/*
+/**/
+# TODO: Add these
 output "lb_dns_name" {
   description = "FQDN of ALB provisioned for service (if present)"
-  value       = "${(var.lb_enable_https || var.lb_enable_http) ? element(concat(aws_lb.service.*.dns_name, list("")), 0) : "not created"}"
+  value       = "${module.lb.dns_name}"
 }
 
 output "lb_zone_id" {
   description = "Route 53 zone ID of ALB provisioned for service (if present)"
-  value       = "${(var.lb_enable_https || var.lb_enable_http) ? element(concat(aws_lb.service.*.zone_id, list("")), 0) : "not created"}"
+  value       = "${module.lb.zone_id}"
 }
-*/
+
+/**/
 output "task_iam_role_arn" {
   description = "ARN of the IAM Role for the ECS Task"
-  value       = "${aws_iam_role.task.arn}"
+  value       = "${element(concat(aws_iam_role.task.*.arn, list("")), 0)}"
 }
 
 output "task_iam_role_name" {
   description = "Name of the IAM Role for the ECS Task"
-  value       = "${aws_iam_role.task.name}"
+  value       = "${element(concat(aws_iam_role.task.*.name, list("")), 0)}"
 }
 
 output "service_iam_role_arn" {
   description = "ARN of the IAM Role for the ECS Service"
-  value       = "${aws_iam_role.service.arn}"
+  value       = "${element(concat(aws_iam_role.service.*.arn, list("")), 0)}"
 }
 
 output "service_iam_role_name" {
   description = "Name of the IAM Role for the ECS Task"
-  value       = "${aws_iam_role.service.name}"
+  value       = "${element(concat(aws_iam_role.service.*.name, list("")), 0)}"
 }
 
 output "container_json" {
   description = ""
-  value       = "${element(data.template_file.container_definition.*.rendered, 0)}"
+  value       = "${element(concat(data.template_file.container_definition.*.rendered, list("")), 0)}"
 }

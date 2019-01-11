@@ -1,5 +1,5 @@
 variable "environment" {
-  default = "one"
+  default = "MGMT"
 }
 
 variable "key_name" {
