@@ -33,7 +33,7 @@ module "label" {
 
 locals {
   lb_protocols   = "${var.lb_enable_http ? "HTTP" : ""},${var.lb_enable_https ? "HTTPS" : ""}"
-  log_group_name = "ecs/${module.label.name}"
+  log_group_name = "/ecs/${module.label.id}"
   sg_rules       = "${var.lb_enable_http ? "http-80-tcp" : ""},${var.lb_enable_https ? "https-443-tcp" : ""}"
 }
 
