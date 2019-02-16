@@ -33,6 +33,21 @@ output "service_iam_role_name" {
   value       = "${element(concat(aws_iam_role.service.*.name, list("")), 0)}"
 }
 
+output "cluster_arn" {
+  description = "ECS cluster ARN"
+  value       = "${element(compact(concat(aws_ecs_service.service-no-lb.*.cluster, aws_ecs_service.service.*.cluster, list(""))), 0)}"
+}
+
+output "service_arn" {
+  description = "ECS service ARN"
+  value       = "${element(compact(concat(aws_ecs_service.service-no-lb.*.id, aws_ecs_service.service.*.id, list(""))), 0)}"
+}
+
+output "service_name" {
+  description = "ECS service name"
+  value       = "${element(compact(concat(aws_ecs_service.service-no-lb.*.name, aws_ecs_service.service.*.name, list(""))), 0)}"
+}
+
 output "container_json" {
   description = ""
   value       = "${element(concat(data.template_file.container_definition.*.rendered, list("")), 0)}"

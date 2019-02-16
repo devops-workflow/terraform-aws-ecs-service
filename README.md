@@ -119,12 +119,15 @@ This software is released under the MIT License (see `LICENSE`).
 
 | Name | Description |
 |------|-------------|
+| cluster\_arn | ECS cluster ARN |
 | container\_json |  |
 | lb\_dns\_aliases | List of DNS aliases add for ALB |
 | lb\_dns\_name | FQDN of ALB provisioned for service (if present) |
 | lb\_zone\_id | Route 53 zone ID of ALB provisioned for service (if present) |
+| service\_arn | ECS service ARN |
 | service\_iam\_role\_arn | ARN of the IAM Role for the ECS Service |
 | service\_iam\_role\_name | Name of the IAM Role for the ECS Task |
+| service\_name | ECS service name |
 | task\_iam\_role\_arn | ARN of the IAM Role for the ECS Task |
 | task\_iam\_role\_name | Name of the IAM Role for the ECS Task |
 
