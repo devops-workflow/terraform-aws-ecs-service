@@ -1,5 +1,6 @@
 provider "aws" {
-  region = "${var.region}"
+  profile = "appzen-test"
+  region  = "${var.region}"
 
   # Make it faster by skipping something
   skip_get_ec2_platforms      = true

@@ -28,6 +28,21 @@ output "service_iam_role_name" {
   value       = "${module.disabled.service_iam_role_name}"
 }
 
+output "cluster_arn" {
+  description = "ECS cluster ARN"
+  value       = "${module.disabled.cluster_arn}"
+}
+
+output "service_arn" {
+  description = "ECS service ARN"
+  value       = "${module.disabled.service_arn}"
+}
+
+output "service_name" {
+  description = "ECS service name"
+  value       = "${module.disabled.service_name}"
+}
+
 output "container_json" {
   description = ""
   value       = "${module.disabled.container_json}"

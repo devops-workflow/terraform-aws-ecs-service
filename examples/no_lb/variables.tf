@@ -1,14 +1,18 @@
+variable "account_name" {
+  default = "appzen-test"
+}
+
 variable "environment" {
-  default = "one"
+  default = "mgmt"
 }
 
 variable "key_name" {
   description = "SSH key name to use"
-  default     = "devops20170606"
+  default     = "devops-2018-12-19"
 }
 
 variable "region" {
-  default = "us-west-2"
+  default = "us-east-1"
 }
 
 variable "instance_type" {

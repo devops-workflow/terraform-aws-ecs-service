@@ -21,20 +21,23 @@ Note that this example may create resources which cost money. Run `terraform des
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| environment | - | string | `MGMT` | no |
-| instance\_type | AWS Instance type, if you change, make sure it is compatible with AMI, not all AMIs allow all instance types | string | `m5.large` | no |
-| key\_name | SSH key name to use | string | `devops20170606` | no |
-| region | - | string | `us-west-2` | no |
+| environment |  | string | `"MGMT"` | no |
+| instance\_type | AWS Instance type, if you change, make sure it is compatible with AMI, not all AMIs allow all instance types | string | `"m5.large"` | no |
+| key\_name | SSH key name to use | string | `"devops20170606"` | no |
+| region |  | string | `"us-west-2"` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| container\_json | - |
+| cluster\_arn | ECS cluster ARN |
+| container\_json |  |
 | lb\_dns\_name | FQDN of ALB provisioned for service (if present) |
 | lb\_zone\_id | Route 53 zone ID of ALB provisioned for service (if present) |
+| service\_arn | ECS service ARN |
 | service\_iam\_role\_arn | ARN of the IAM Role for the ECS Service |
 | service\_iam\_role\_name | Name of the IAM Role for the ECS Task |
+| service\_name | ECS service name |
 | task\_iam\_role\_arn | ARN of the IAM Role for the ECS Task |
 | task\_iam\_role\_name | Name of the IAM Role for the ECS Task |
 
