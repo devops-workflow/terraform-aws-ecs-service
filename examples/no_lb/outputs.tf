@@ -1,3 +1,8 @@
+output "log_group_name" {
+  description = "Cloudwatch log group name for service"
+  value       = "${module.no_lb.log_group_name}"
+}
+
 output "task_iam_role_arn" {
   description = "ARN of the IAM Role for the ECS Task"
   value       = "${module.no_lb.task_iam_role_arn}"

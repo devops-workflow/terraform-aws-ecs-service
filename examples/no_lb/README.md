@@ -31,6 +31,7 @@ Note that this example may create resources which cost money. Run `terraform des
 |------|-------------|
 | cluster\_arn | ECS cluster ARN |
 | container\_json |  |
+| log\_group\_name | Cloudwatch log group name for service |
 | service\_arn | ECS service ARN |
 | service\_iam\_role\_arn | ARN of the IAM Role for the ECS Service |
 | service\_iam\_role\_name | Name of the IAM Role for the ECS Task |

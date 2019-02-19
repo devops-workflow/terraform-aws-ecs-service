@@ -124,6 +124,7 @@ This software is released under the MIT License (see `LICENSE`).
 | lb\_dns\_aliases | List of DNS aliases add for ALB |
 | lb\_dns\_name | FQDN of ALB provisioned for service (if present) |
 | lb\_zone\_id | Route 53 zone ID of ALB provisioned for service (if present) |
+| log\_group\_name | Cloudwatch log group name for service |
 | service\_arn | ECS service ARN |
 | service\_iam\_role\_arn | ARN of the IAM Role for the ECS Service |
 | service\_iam\_role\_name | Name of the IAM Role for the ECS Task |
