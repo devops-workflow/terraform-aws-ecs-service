@@ -15,6 +15,7 @@ output "lb_zone_id" {
   description = "Route 53 zone ID of ALB provisioned for service (if present)"
   value       = "${module.lb.zone_id}"
 }
+
 //
 // LB Target Group attributes
 //

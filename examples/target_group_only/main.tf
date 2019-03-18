@@ -15,15 +15,15 @@ module "basic" {
   ecs_security_group_id = "${module.ecs-cluster.cluster_security_group_id}"
   environment           = "${var.environment}"
   organization          = "appzen"
-  enabled = false
-  target_group_only = true
+  enabled               = false
+  target_group_only     = true
 
   #docker_registry = "105667981759.dkr.ecr.us-west-2.amazonaws.com/wiser"
   #docker_image    = "map-application:latest"
   docker_image = "infrastructureascode/hello-world:latest"
 
   app_port             = 8080
-  dns_parent_zone_name = "dev.appzen.com"                                 # target group & container port
+  dns_parent_zone_name = "dev.appzen.com"                                  # target group & container port
   lb_enable_http       = true
   lb_internal          = true
   lb_subnet_ids        = ["${data.aws_subnet_ids.private_subnet_ids.ids}"]

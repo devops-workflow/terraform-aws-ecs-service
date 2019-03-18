@@ -19,7 +19,7 @@ Note that this example may create resources which cost money. Run `terraform des
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| account\_name |  | string | `"appzen-test"` | no |
+| account\_name |  | string | `"appzen-dev"` | no |
 | environment |  | string | `"mgmt"` | no |
 | instance\_type | AWS Instance type, if you change, make sure it is compatible with AMI, not all AMIs allow all instance types | string | `"m5.large"` | no |
 | key\_name | SSH key name to use | string | `"devops-2018-12-19"` | no |
@@ -37,6 +37,11 @@ Note that this example may create resources which cost money. Run `terraform des
 | service\_iam\_role\_arn | ARN of the IAM Role for the ECS Service |
 | service\_iam\_role\_name | Name of the IAM Role for the ECS Task |
 | service\_name | ECS service name |
+| target\_group\_arns | ARNs of all the target groups. Useful for passing to your Auto Scaling group module. |
+| target\_group\_arns\_suffix | ARNs suffix of all the target groups. Useful for passing to your Auto Scaling group module. |
+| target\_group\_http\_arns | ARNs of the HTTP target groups. Useful for passing to your Auto Scaling group module. |
+| target\_group\_https\_arns | ARNs of the HTTPS target groups. Useful for passing to your Auto Scaling group module. |
+| target\_group\_tcp\_arns | ARNs of the TCP target groups. Useful for passing to your Auto Scaling group module. |
 | task\_iam\_role\_arn | ARN of the IAM Role for the ECS Task |
 | task\_iam\_role\_name | Name of the IAM Role for the ECS Task |
 

@@ -131,6 +131,11 @@ This software is released under the MIT License (see `LICENSE`).
 | service\_iam\_role\_arn | ARN of the IAM Role for the ECS Service |
 | service\_iam\_role\_name | Name of the IAM Role for the ECS Task |
 | service\_name | ECS service name |
+| target\_group\_arns | ARNs of all the target groups. Useful for passing to your Auto Scaling group module. |
+| target\_group\_arns\_suffix | ARNs suffix of all the target groups. Useful for passing to your Auto Scaling group module. |
+| target\_group\_http\_arns | ARNs of the HTTP target groups. Useful for passing to your Auto Scaling group module. |
+| target\_group\_https\_arns | ARNs of the HTTPS target groups. Useful for passing to your Auto Scaling group module. |
+| target\_group\_tcp\_arns | ARNs of the TCP target groups. Useful for passing to your Auto Scaling group module. |
 | task\_iam\_role\_arn | ARN of the IAM Role for the ECS Task |
 | task\_iam\_role\_name | Name of the IAM Role for the ECS Task |
 
