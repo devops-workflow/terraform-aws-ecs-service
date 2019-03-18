@@ -112,6 +112,8 @@ This software is released under the MIT License (see `LICENSE`).
 | region | AWS region in which ECS cluster is located (default is 'us-east-1') | string | `"us-east-1"` | no |
 | service\_identifier | Unique identifier for this pganalyze service (used in log prefix, service name etc.) | string | `"service"` | no |
 | tags | A map of additional tags | map | `<map>` | no |
+| target\_group\_only | Only create target group without a load balancer. For when more advanced LB setups are required | string | `"false"` | no |
+| target\_type | Type for targets for target group. Can be: instance or ip | string | `"instance"` | no |
 | task\_identifier | Unique identifier for this pganalyze task (used in log prefix, service name etc.) | string | `"task"` | no |
 | vpc\_id | ID of VPC in which ECS cluster is located | string | n/a | yes |
 

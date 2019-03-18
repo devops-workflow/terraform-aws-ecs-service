@@ -156,6 +156,16 @@ variable "lb_type" {
   default     = "application"
 }
 
+variable "target_group_only" {
+  description = "Only create target group without a load balancer. For when more advanced LB setups are required"
+  default     = false
+}
+
+variable "target_type" {
+  description = "Type for targets for target group. Can be: instance or ip"
+  default     = "instance"
+}
+
 // Variables specific to Security Group module
 
 //

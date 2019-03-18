@@ -13,7 +13,7 @@ module "enabled" {
 
 module "enable_lb" {
   source  = "devops-workflow/boolean/local"
-  version = "0.1.1"
+  version = "0.1.2"
   value   = "${var.enable_lb}"
 }
 
@@ -38,23 +38,29 @@ locals {
 }
 
 module "lb" {
-  source           = "devops-workflow/lb/aws"
-  version          = "3.4.1"
-  enabled          = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
-  name             = "${module.label.name}"
-  attributes       = "${var.attributes}"
-  delimiter        = "${var.delimiter}"
-  environment      = "${var.environment}"
-  namespace-env    = "${var.namespace-env}"
-  namespace-org    = "${var.namespace-org}"
-  organization     = "${var.organization}"
-  tags             = "${var.tags}"
-  certificate_name = "${var.acm_cert_domain}"
-  lb_protocols     = "${compact(split(",", local.lb_protocols))}"
-  internal         = "${var.lb_internal}"
-  ports            = "${var.lb_ports}"
-  lb_https_ports   = "${var.lb_https_ports}"
-  subnets          = "${var.lb_subnet_ids}"
+  # Use master branch to test
+  source = "github.com/appzen-oss/terraform-aws-lb?ref=master"
+
+  #source           = "devops-workflow/lb/aws"
+  #version          = "3.4.1"
+  enabled = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
+
+  target_group_only = "${var.target_group_only}"
+  target_type       = "${var.target_type}"
+  name              = "${module.label.name}"
+  attributes        = "${var.attributes}"
+  delimiter         = "${var.delimiter}"
+  environment       = "${var.environment}"
+  namespace-env     = "${var.namespace-env}"
+  namespace-org     = "${var.namespace-org}"
+  organization      = "${var.organization}"
+  tags              = "${var.tags}"
+  certificate_name  = "${var.acm_cert_domain}"
+  lb_protocols      = "${compact(split(",", local.lb_protocols))}"
+  internal          = "${var.lb_internal}"
+  ports             = "${var.lb_ports}"
+  lb_https_ports    = "${var.lb_https_ports}"
+  subnets           = "${var.lb_subnet_ids}"
 
   /*
   subnets               = "${split(",",

@@ -1,3 +1,6 @@
+//
+// LB
+//
 output "lb_dns_aliases" {
   description = "List of DNS aliases add for ALB"
   value       = "${module.route53-aliases.hostnames}"
@@ -12,7 +15,35 @@ output "lb_zone_id" {
   description = "Route 53 zone ID of ALB provisioned for service (if present)"
   value       = "${module.lb.zone_id}"
 }
+//
+// LB Target Group attributes
+//
+output "target_group_http_arns" {
+  description = "ARNs of the HTTP target groups. Useful for passing to your Auto Scaling group module."
+  value       = "${module.lb.target_group_http_arns}"
+}
 
+output "target_group_https_arns" {
+  description = "ARNs of the HTTPS target groups. Useful for passing to your Auto Scaling group module."
+  value       = "${module.lb.target_group_https_arns}"
+}
+
+output "target_group_tcp_arns" {
+  description = "ARNs of the TCP target groups. Useful for passing to your Auto Scaling group module."
+  value       = "${module.lb.target_group_tcp_arns}"
+}
+
+output "target_group_arns" {
+  description = "ARNs of all the target groups. Useful for passing to your Auto Scaling group module."
+  value       = "${module.lb.target_group_arns}"
+}
+
+output "target_group_arns_suffix" {
+  description = "ARNs suffix of all the target groups. Useful for passing to your Auto Scaling group module."
+  value       = "${module.lb.target_group_arns_suffix}"
+}
+
+//
 output "log_group_name" {
   description = "Cloudwatch log group name for service"
   value       = "${local.log_group_name}"

@@ -10,6 +10,7 @@ repos:
     hooks:
       - id: terraform_tools
       - id: terraform_template
+        args: [--owner=appzen-oss, --repo=terraform-template]
       - id: terraform_fmt
       - id: terraform_docs
       - id: terraform_graph
