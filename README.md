@@ -99,6 +99,9 @@ This software is released under the MIT License (see `LICENSE`).
 | lb\_https\_ports | HTTPS ports load balancer should listen on | string | `"443"` | no |
 | lb\_ingress\_cidr\_blocks | List of ingress CIDR blocks for load balancer | list | `<list>` | no |
 | lb\_internal | Configure LB as internal-only | string | `"true"` | no |
+| lb\_listener\_arn | Add to existing LB listener | string | `""` | no |
+| lb\_listener\_rule\_pattern | Add to existing LB listener with rule pattern | string | `""` | no |
+| lb\_listener\_rule\_priority | Add to existing LB listener as rule priority | string | `""` | no |
 | lb\_ports | Ports load balancer should listen on | string | `"80"` | no |
 | lb\_stickiness\_enabled | Enable LB session stickiness (default false) | string | `"false"` | no |
 | lb\_subnet\_ids | VPC subnet IDs in which to create the LB (unnecessary if neither lb_enable_https or lb_enable_http are true) | list | `<list>` | no |
@@ -123,19 +126,24 @@ This software is released under the MIT License (see `LICENSE`).
 |------|-------------|
 | cluster\_arn | ECS cluster ARN |
 | container\_json |  |
+| lb\_arn | ARN of the LB |
 | lb\_dns\_aliases | List of DNS aliases add for ALB |
 | lb\_dns\_name | FQDN of ALB provisioned for service (if present) |
+| lb\_listener\_arns | ARNs of all the LB Listeners |
+| lb\_listener\_http\_arns | The ARNs of the HTTP LB Listeners |
+| lb\_listener\_https\_arns | The ARNs of the HTTPS LB Listeners |
+| lb\_listener\_tcp\_arns | The ARNs of the network TCP LB Listeners |
+| lb\_target\_group\_arns | ARNs of all the target groups. Useful for passing to your Auto Scaling group module. |
+| lb\_target\_group\_arns\_suffix | ARNs suffix of all the target groups. Useful for passing to your Auto Scaling group module. |
+| lb\_target\_group\_http\_arns | ARNs of the HTTP target groups. Useful for passing to your Auto Scaling group module. |
+| lb\_target\_group\_https\_arns | ARNs of the HTTPS target groups. Useful for passing to your Auto Scaling group module. |
+| lb\_target\_group\_tcp\_arns | ARNs of the TCP target groups. Useful for passing to your Auto Scaling group module. |
 | lb\_zone\_id | Route 53 zone ID of ALB provisioned for service (if present) |
 | log\_group\_name | Cloudwatch log group name for service |
 | service\_arn | ECS service ARN |
 | service\_iam\_role\_arn | ARN of the IAM Role for the ECS Service |
 | service\_iam\_role\_name | Name of the IAM Role for the ECS Task |
 | service\_name | ECS service name |
-| target\_group\_arns | ARNs of all the target groups. Useful for passing to your Auto Scaling group module. |
-| target\_group\_arns\_suffix | ARNs suffix of all the target groups. Useful for passing to your Auto Scaling group module. |
-| target\_group\_http\_arns | ARNs of the HTTP target groups. Useful for passing to your Auto Scaling group module. |
-| target\_group\_https\_arns | ARNs of the HTTPS target groups. Useful for passing to your Auto Scaling group module. |
-| target\_group\_tcp\_arns | ARNs of the TCP target groups. Useful for passing to your Auto Scaling group module. |
 | task\_iam\_role\_arn | ARN of the IAM Role for the ECS Task |
 | task\_iam\_role\_name | Name of the IAM Role for the ECS Task |
 

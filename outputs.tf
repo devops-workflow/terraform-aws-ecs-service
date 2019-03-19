@@ -1,6 +1,11 @@
 //
 // LB
 //
+output "lb_arn" {
+  description = "ARN of the LB"
+  value       = "${module.lb.arn}"
+}
+
 output "lb_dns_aliases" {
   description = "List of DNS aliases add for ALB"
   value       = "${module.route53-aliases.hostnames}"
@@ -17,29 +22,52 @@ output "lb_zone_id" {
 }
 
 //
+// LB Listener attributes
+//
+output "lb_listener_http_arns" {
+  description = "The ARNs of the HTTP LB Listeners"
+  value       = "${module.lb.listener_http_arns}"
+}
+
+output "lb_listener_https_arns" {
+  description = "The ARNs of the HTTPS LB Listeners"
+  value       = "${module.lb.listener_https_arns}"
+}
+
+output "lb_listener_tcp_arns" {
+  description = "The ARNs of the network TCP LB Listeners"
+  value       = "${module.lb.listener_tcp_arns}"
+}
+
+output "lb_listener_arns" {
+  description = "ARNs of all the LB Listeners"
+  value       = "${module.lb.listener_arns}"
+}
+
+//
 // LB Target Group attributes
 //
-output "target_group_http_arns" {
+output "lb_target_group_http_arns" {
   description = "ARNs of the HTTP target groups. Useful for passing to your Auto Scaling group module."
   value       = "${module.lb.target_group_http_arns}"
 }
 
-output "target_group_https_arns" {
+output "lb_target_group_https_arns" {
   description = "ARNs of the HTTPS target groups. Useful for passing to your Auto Scaling group module."
   value       = "${module.lb.target_group_https_arns}"
 }
 
-output "target_group_tcp_arns" {
+output "lb_target_group_tcp_arns" {
   description = "ARNs of the TCP target groups. Useful for passing to your Auto Scaling group module."
   value       = "${module.lb.target_group_tcp_arns}"
 }
 
-output "target_group_arns" {
+output "lb_target_group_arns" {
   description = "ARNs of all the target groups. Useful for passing to your Auto Scaling group module."
   value       = "${module.lb.target_group_arns}"
 }
 
-output "target_group_arns_suffix" {
+output "lb_target_group_arns_suffix" {
   description = "ARNs suffix of all the target groups. Useful for passing to your Auto Scaling group module."
   value       = "${module.lb.target_group_arns_suffix}"
 }

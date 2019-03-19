@@ -141,6 +141,21 @@ variable "lb_ingress_cidr_blocks" {
   default     = ["10.0.0.0/8"]
 }
 
+variable "lb_listener_arn" {
+  description = "Add to existing LB listener"
+  default     = ""
+}
+
+variable "lb_listener_rule_pattern" {
+  description = "Add to existing LB listener with rule pattern"
+  default     = ""
+}
+
+variable "lb_listener_rule_priority" {
+  description = "Add to existing LB listener as rule priority"
+  default     = ""
+}
+
 variable "lb_ports" {
   description = "Ports load balancer should listen on"
   default     = "80"
@@ -156,6 +171,7 @@ variable "lb_type" {
   default     = "application"
 }
 
+# Remove?
 variable "target_group_only" {
   description = "Only create target group without a load balancer. For when more advanced LB setups are required"
   default     = false

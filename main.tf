@@ -17,6 +17,14 @@ module "enable_lb" {
   value   = "${var.enable_lb}"
 }
 
+/*
+# Remove?
+module "lb_target_group_only" {
+  source  = "devops-workflow/boolean/local"
+  version = "0.1.2"
+  value   = "${var.target_group_only}"
+}
+/**/
 # Define composite variables for resources
 module "label" {
   source        = "devops-workflow/label/local"
@@ -35,6 +43,12 @@ locals {
   lb_protocols   = "${var.lb_enable_http ? "HTTP" : ""},${var.lb_enable_https ? "HTTPS" : ""}"
   log_group_name = "/ecs/${module.label.id}"
   sg_rules       = "${var.lb_enable_http ? "http-80-tcp" : ""},${var.lb_enable_https ? "https-443-tcp" : ""}"
+
+  lb_existing = "${
+    var.lb_listener_arn != "" &&
+    var.lb_listener_rule_priority != "" &&
+    var.lb_listener_rule_pattern != ""
+    ? 1 : 0 }"
 }
 
 module "lb" {
@@ -43,9 +57,9 @@ module "lb" {
 
   #source           = "devops-workflow/lb/aws"
   #version          = "3.4.1"
-  enabled = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
+  enabled = "${module.enabled.value && module.enable_lb.value && ! local.lb_existing ? 1 : 0}"
 
-  target_group_only = "${var.target_group_only}"
+  target_group_only = "${local.lb_existing}"
   target_type       = "${var.target_type}"
   name              = "${module.label.name}"
   attributes        = "${var.attributes}"
@@ -102,7 +116,27 @@ module "sg-lb" {
   ingress_rules       = "${compact(split(",", local.sg_rules))}"
 }
 
-# TODO: separate service name & container name. Make different to imporve logging, etc
+resource "aws_lb_listener_rule" "static" {
+  count        = "${local.lb_existing}"
+  listener_arn = "${var.lb_listener_arn}"
+  priority     = "${var.lb_listener_rule_priority}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${element(module.lb.target_group_arns, 0)}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["${var.lb_listener_rule_pattern}"]
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# TODO: separate service name & container name. Make different to improve logging, etc
 
 # DNS for LB
 module "route53-aliases" {
@@ -158,7 +192,7 @@ resource "aws_ecs_task_definition" "task" {
 }
 
 resource "aws_ecs_service" "service-no-lb" {
-  count                              = "${module.enabled.value && ! module.enable_lb.value ? 1 : 0}"
+  count                              = "${module.enabled.value && ! module.enable_lb.value && ! local.lb_existing ? 1 : 0}"
   name                               = "${module.label.name}"
   cluster                            = "${var.ecs_cluster_arn}"
   task_definition                    = "${aws_ecs_task_definition.task.arn}"
@@ -180,7 +214,7 @@ resource "aws_ecs_service" "service-no-lb" {
 }
 
 resource "aws_ecs_service" "service" {
-  count                              = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
+  count                              = "${(module.enabled.value && module.enable_lb.value) || local.lb_existing ? 1 : 0}"
   name                               = "${module.label.name}"
   cluster                            = "${var.ecs_cluster_arn}"
   task_definition                    = "${aws_ecs_task_definition.task.arn}"
