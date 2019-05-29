@@ -5,6 +5,9 @@
 # https://www.terraform.io/docs/providers/aws/r/ecs_service.html
 # https://www.terraform.io/docs/providers/aws/r/ecs_task_definition.html
 
+# TODO: Add support for multiple containers
+#   Need for sidecars: Datadog agent, service mesh,
+
 module "enabled" {
   source  = "devops-workflow/boolean/local"
   version = "0.1.2"
@@ -112,7 +115,7 @@ module "sg-lb" {
   vpc_id              = "${var.vpc_id}"
   egress_cidr_blocks  = ["0.0.0.0/0"]
   egress_rules        = ["all-all"]
-  ingress_cidr_blocks = ["${var.lb_ingress_cidr_blocks}"]                           # "${var.allowed_cidr_blocks}"
+  ingress_cidr_blocks = ["${var.lb_ingress_cidr_blocks}"]
   ingress_rules       = "${compact(split(",", local.sg_rules))}"
 }
 
@@ -140,7 +143,7 @@ resource "aws_lb_listener_rule" "static" {
 
 # DNS for LB
 module "route53-aliases" {
-  #source                  = "git::https://github.com/devops-workflow/terraform-aws-route53-alias.git"
+  #source = "git::https://github.com/devops-workflow/terraform-aws-route53-alias.git"
   source  = "devops-workflow/route53-alias/aws"
   version = "0.2.4"
   enabled = "${module.enabled.value && module.enable_lb.value ? 1 : 0}"
@@ -161,6 +164,7 @@ data "template_file" "container_definition" {
   count    = "${module.enabled.value}"
   template = "${file("${path.module}/files/container_definition.json")}"
 
+  # ADD: networkMode, cpu
   vars {
     name               = "${module.label.name}"
     image              = "${var.docker_registry != "" ? "${var.docker_registry}/${var.docker_image}" : var.docker_image}"
@@ -182,30 +186,59 @@ data "template_file" "container_definition" {
 
 # FIX: resource cannot be found if it fails
 #   when passing in container_definition, if def bad, wrong format, invalid arg, etc.
+# Look into support for sidecars, proxy, (AppMesh)
 resource "aws_ecs_task_definition" "task" {
-  count                 = "${module.enabled.value}"
+  #count                 = "${module.enabled.value}"
+  count                 = "${module.enabled.value && var.task_definition_arn == "" ? 1 : 0}"
   family                = "${module.label.id}"
   container_definitions = "${var.container_definition == "" ? element(concat(data.template_file.container_definition.*.rendered, list("")), 0) : var.container_definition }"
   network_mode          = "${var.network_mode}"
   task_role_arn         = "${aws_iam_role.task.arn}"
   volume                = "${var.docker_volumes}"
+
+  /*
+  execution_role_arn =
+  cpu                      = "${var.cpu_units}"
+  memory                   = "${var.memory}" # greater of mem and mem_res ?
+  requires_compatibilities = "${var.requires_compatibilities}"
+  tags                     = "${module.label.tags}"
+  /**/
 }
 
+# TODO: add service registry support
 resource "aws_ecs_service" "service-no-lb" {
   count                              = "${module.enabled.value && ! module.enable_lb.value && ! local.lb_existing ? 1 : 0}"
   name                               = "${module.label.name}"
   cluster                            = "${var.ecs_cluster_arn}"
-  task_definition                    = "${aws_ecs_task_definition.task.arn}"
+  task_definition                    = "${var.task_definition_arn == "" ? aws_ecs_task_definition.task.arn : var.task_definition_arn}"
   desired_count                      = "${var.ecs_desired_count}"
   deployment_maximum_percent         = "${var.ecs_deployment_maximum_percent}"
   deployment_minimum_healthy_percent = "${var.ecs_deployment_minimum_healthy_percent}"
   placement_constraints              = "${var.ecs_placement_constraints}"
 
+  /* Make these optional
+  enable_ecs_managed_tags = "${var.enable_ecs_managed_tags}"
+  propagate_tags          = "${var.ecs_propagate_tags}"
+  tags                    = "${module.label.tags}"
+  // Fargate
+  launch_type     = "${var.ecs_launch_type}"
+  // ONLY if network mode is awsvpc
+  network_configuration {
+     security_groups  = ["${aws_security_group.ecs_service_sg.id}"]
+     subnets          = ["${split(",", var.private_subnet_ids)}"]
+  }
+  /**/
+
+  # FIX: look at deprecate msg
+  #ordered_placement_strategy {}
+  #placement_contraints {}
   placement_strategy {
     type  = "${var.ecs_placement_strategy_type}"
     field = "${var.ecs_placement_strategy_field}"
   }
-
+  lifecycle {
+    ignore_changes = ["desired_count"]
+  }
   depends_on = [
     "aws_cloudwatch_log_group.task",
     "aws_ecs_task_definition.task",
@@ -217,22 +250,28 @@ resource "aws_ecs_service" "service" {
   count                              = "${(module.enabled.value && module.enable_lb.value) || local.lb_existing ? 1 : 0}"
   name                               = "${module.label.name}"
   cluster                            = "${var.ecs_cluster_arn}"
-  task_definition                    = "${aws_ecs_task_definition.task.arn}"
+  task_definition                    = "${var.task_definition_arn == "" ? aws_ecs_task_definition.task.arn : var.task_definition_arn}"
   desired_count                      = "${var.ecs_desired_count}"
   iam_role                           = "${aws_iam_role.service.arn}"
   deployment_maximum_percent         = "${var.ecs_deployment_maximum_percent}"
   deployment_minimum_healthy_percent = "${var.ecs_deployment_minimum_healthy_percent}"
   placement_constraints              = "${var.ecs_placement_constraints}"
+  health_check_grace_period_seconds  = "${var.ecs_health_check_grace_period_seconds}"
 
   placement_strategy {
     type  = "${var.ecs_placement_strategy_type}"
     field = "${var.ecs_placement_strategy_field}"
   }
 
+  # TODO: Change for fargate?
   load_balancer = {
     target_group_arn = "${element(module.lb.target_group_arns, 0)}"
     container_name   = "${module.label.name}"
     container_port   = "${var.app_port}"
+  }
+
+  lifecycle {
+    ignore_changes = ["desired_count"]
   }
 
   depends_on = [

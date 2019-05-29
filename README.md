@@ -76,6 +76,7 @@ This software is released under the MIT License (see `LICENSE`).
 | ecs\_deployment\_maximum\_percent | Upper limit in percentage of tasks that can be running during a deployment (default 200) | string | `"200"` | no |
 | ecs\_deployment\_minimum\_healthy\_percent | Lower limit in percentage of tasks that must remain healthy during a deployment (default 100) | string | `"100"` | no |
 | ecs\_desired\_count | Desired number of containers in the task (default 1) | string | `"1"` | no |
+| ecs\_health\_check\_grace\_period\_seconds | Health check grace period (seconds) before LB health checks start | string | `"30"` | no |
 | ecs\_log\_retention | Number of days of ECS task logs to retain (default 3) | string | `"3"` | no |
 | ecs\_placement\_constraints | Placement contraints to use when distributing tasks | list | `<list>` | no |
 | ecs\_placement\_strategy\_field | Container metadata field to use when distributing tasks (default memory) | string | `"memory"` | no |
@@ -117,6 +118,7 @@ This software is released under the MIT License (see `LICENSE`).
 | tags | A map of additional tags | map | `<map>` | no |
 | target\_group\_only | Only create target group without a load balancer. For when more advanced LB setups are required | string | `"false"` | no |
 | target\_type | Type for targets for target group. Can be: instance or ip | string | `"instance"` | no |
+| task\_definition\_arn | Task definition ARN to use instead of module generated one | string | `""` | no |
 | task\_identifier | Unique identifier for this pganalyze task (used in log prefix, service name etc.) | string | `"task"` | no |
 | vpc\_id | ID of VPC in which ECS cluster is located | string | n/a | yes |
 
