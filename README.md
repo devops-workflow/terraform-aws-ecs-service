@@ -82,6 +82,7 @@ This software is released under the MIT License (see `LICENSE`).
 | ecs\_placement\_strategy\_field | Container metadata field to use when distributing tasks (default memory) | string | `"memory"` | no |
 | ecs\_placement\_strategy\_type | Placement strategy to use when distributing tasks (default binpack) | string | `"binpack"` | no |
 | ecs\_security\_group\_id | Security group ID of ECS cluster in which the service will be deployed | string | n/a | yes |
+| enable\_ecs\_managed\_tags | Enable ECS managed task tagging | string | `"true"` | no |
 | enable\_lb | Set to false to prevent the module from creating a Load Balancer | string | `"true"` | no |
 | enabled | Set to false to prevent the module from creating anything | string | `"true"` | no |
 | environment | Environment (ex: `dev`, `qa`, `stage`, `prod`). (Second or top level namespace. Depending on namespacing options) | string | n/a | yes |
@@ -113,6 +114,7 @@ This software is released under the MIT License (see `LICENSE`).
 | namespace-org | Prefix name with the organization. If true, format is: <org>-<env namespaced name>. If both env and org namespaces are used, format will be <org>-<env>-<name> | string | `"false"` | no |
 | network\_mode | Docker network mode for task (default "bridge") | string | `"bridge"` | no |
 | organization | Organization name (Top level namespace). | string | `""` | no |
+| propagate\_tags\_method | Propagate tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION | string | `"SERVICE"` | no |
 | region | AWS region in which ECS cluster is located (default is 'us-east-1') | string | `"us-east-1"` | no |
 | service\_identifier | Unique identifier for this pganalyze service (used in log prefix, service name etc.) | string | `"service"` | no |
 | tags | A map of additional tags | map | `<map>` | no |

@@ -210,16 +210,16 @@ resource "aws_ecs_service" "service-no-lb" {
   count                              = "${module.enabled.value && ! module.enable_lb.value && ! local.lb_existing ? 1 : 0}"
   name                               = "${module.label.name}"
   cluster                            = "${var.ecs_cluster_arn}"
-  task_definition                    = "${var.task_definition_arn == "" ? aws_ecs_task_definition.task.arn : var.task_definition_arn}"
-  desired_count                      = "${var.ecs_desired_count}"
   deployment_maximum_percent         = "${var.ecs_deployment_maximum_percent}"
   deployment_minimum_healthy_percent = "${var.ecs_deployment_minimum_healthy_percent}"
+  desired_count                      = "${var.ecs_desired_count}"
+  enable_ecs_managed_tags            = "${var.enable_ecs_managed_tags}"
   placement_constraints              = "${var.ecs_placement_constraints}"
+  propagate_tags                     = "${var.propagate_tags_method}"
+  tags                               = "${module.label.tags}"
+  task_definition                    = "${var.task_definition_arn == "" ? aws_ecs_task_definition.task.arn : var.task_definition_arn}"
 
   /* Make these optional
-  enable_ecs_managed_tags = "${var.enable_ecs_managed_tags}"
-  propagate_tags          = "${var.ecs_propagate_tags}"
-  tags                    = "${module.label.tags}"
   // Fargate
   launch_type     = "${var.ecs_launch_type}"
   // ONLY if network mode is awsvpc
@@ -229,10 +229,7 @@ resource "aws_ecs_service" "service-no-lb" {
   }
   /**/
 
-  # FIX: look at deprecate msg
-  #ordered_placement_strategy {}
-  #placement_contraints {}
-  placement_strategy {
+  ordered_placement_strategy {
     type  = "${var.ecs_placement_strategy_type}"
     field = "${var.ecs_placement_strategy_field}"
   }
@@ -250,15 +247,18 @@ resource "aws_ecs_service" "service" {
   count                              = "${(module.enabled.value && module.enable_lb.value) || local.lb_existing ? 1 : 0}"
   name                               = "${module.label.name}"
   cluster                            = "${var.ecs_cluster_arn}"
-  task_definition                    = "${var.task_definition_arn == "" ? aws_ecs_task_definition.task.arn : var.task_definition_arn}"
-  desired_count                      = "${var.ecs_desired_count}"
-  iam_role                           = "${aws_iam_role.service.arn}"
   deployment_maximum_percent         = "${var.ecs_deployment_maximum_percent}"
   deployment_minimum_healthy_percent = "${var.ecs_deployment_minimum_healthy_percent}"
-  placement_constraints              = "${var.ecs_placement_constraints}"
+  desired_count                      = "${var.ecs_desired_count}"
+  enable_ecs_managed_tags            = "${var.enable_ecs_managed_tags}"
   health_check_grace_period_seconds  = "${var.ecs_health_check_grace_period_seconds}"
+  iam_role                           = "${aws_iam_role.service.arn}"
+  placement_constraints              = "${var.ecs_placement_constraints}"
+  propagate_tags                     = "${var.propagate_tags_method}"
+  tags                               = "${module.label.tags}"
+  task_definition                    = "${var.task_definition_arn == "" ? aws_ecs_task_definition.task.arn : var.task_definition_arn}"
 
-  placement_strategy {
+  ordered_placement_strategy {
     type  = "${var.ecs_placement_strategy_type}"
     field = "${var.ecs_placement_strategy_field}"
   }

@@ -26,6 +26,11 @@ variable "enabled" {
   default     = true
 }
 
+variable "enable_ecs_managed_tags" {
+  description = "Enable ECS managed task tagging"
+  default     = true
+}
+
 variable "enable_lb" {
   description = "Set to false to prevent the module from creating a Load Balancer"
   default     = true
@@ -116,6 +121,11 @@ variable "ecs_data_volume_path" {
 variable "network_mode" {
   description = "Docker network mode for task (default \"bridge\")"
   default     = "bridge"
+}
+
+variable "propagate_tags_method" {
+  description = "Propagate tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION"
+  default     = "SERVICE"
 }
 
 variable "service_identifier" {
