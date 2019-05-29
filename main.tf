@@ -51,7 +51,7 @@ locals {
     var.lb_listener_arn != "" &&
     var.lb_listener_rule_priority != "" &&
     var.lb_listener_rule_pattern != ""
-    ? 1 : 0 }"
+  ? 1 : 0}"
 }
 
 module "lb" {
@@ -152,7 +152,7 @@ module "route53-aliases" {
   parent_zone_name = "${var.dns_parent_zone_name != "" ?
     "${var.dns_parent_zone_name}" :
     "${module.label.environment}.${module.label.organization}.com."
-    }"
+  }"
 
   target_dns_name        = "${module.lb.dns_name}"
   target_zone_id         = "${module.lb.zone_id}"
@@ -180,7 +180,7 @@ data "template_file" "container_definition" {
     awslogs_region        = "${var.region}"
     awslogs_stream_prefix = "${module.label.environment}"
     additional_config     = "${var.container_definition_additional == "" ? "" :
-      ",${var.container_definition_additional}"}"
+    ",${var.container_definition_additional}"}"
   }
 }
 
@@ -191,8 +191,9 @@ resource "aws_ecs_task_definition" "task" {
   #count                 = "${module.enabled.value}"
   count                 = "${module.enabled.value && var.task_definition_arn == "" ? 1 : 0}"
   family                = "${module.label.id}"
-  container_definitions = "${var.container_definition == "" ? element(concat(data.template_file.container_definition.*.rendered, list("")), 0) : var.container_definition }"
+  container_definitions = "${var.container_definition == "" ? element(concat(data.template_file.container_definition.*.rendered, list("")), 0) : var.container_definition}"
   network_mode          = "${var.network_mode}"
+  tags                  = "${module.label.tags}"
   task_role_arn         = "${aws_iam_role.task.arn}"
   volume                = "${var.docker_volumes}"
 
