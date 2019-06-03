@@ -47,6 +47,23 @@ variable "vpc_id" {
   type        = "string"
 }
 
+variable "assign_public_ip" {
+  description = "Assign a public IP address to the ENI (Fargate launch type only)"
+  default     = false
+}
+
+variable "awsvpc_security_group_ids" {
+  description = "Security ID's to assign to awsvpc network mode tasks"
+  type        = "list"
+  default     = []
+}
+
+variable "awsvpc_subnet_ids" {
+  description = "Subnet IDs to put awsvpc network tasks in"
+  type        = "list"
+  default     = []
+}
+
 variable "ecs_cluster_arn" {
   description = "ARN of ECS cluster in which the service will be deployed"
   type        = "string"
@@ -63,11 +80,20 @@ variable "ecs_desired_count" {
   default     = 1
 }
 
+variable "ecs_launch_type" {
+  description = "The launch type on which to run your service. The valid values are EC2 and FARGATE"
+  default     = "EC2"
+}
+
 variable "docker_command" {
   description = "String to override CMD in Docker container (default \"\")"
   default     = ""
 }
 
+variable "docker_cpu" {
+  description = "CPU units for task"
+  default     = "512"
+}
 variable "docker_environment" {
   description = "List of environment maps of format { \"name\" = \"var_name\", \"value\" = \"var_value\" }"
   type        = "list"
@@ -123,21 +149,46 @@ variable "network_mode" {
   default     = "bridge"
 }
 
+variable "platform_version" {
+  description = "The platform version on which to run your service. Only applicable for launch_type set to FARGATE"
+  default     = ""
+}
+
 variable "propagate_tags_method" {
   description = "Propagate tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION"
   default     = "SERVICE"
 }
 
+variable "requires_compatibilities" {
+  description = "A set of launch types required by the task. The valid values are EC2 and FARGATE"
+  type        = "list"
+  default     = ["EC2"]
+}
+
+variable "security_group_ids" {
+  description = "The security groups associated with the task or service"
+  type = "list"
+  default = []
+}
 variable "service_identifier" {
   description = "Unique identifier for this pganalyze service (used in log prefix, service name etc.)"
   default     = "service"
+}
+
+variable "subnet_ids" {
+  description = "The subnets associated with the task or service. For awsvpc"
+  type = "list"
+  default = []
 }
 
 variable "task_definition_arn" {
   description = "Task definition ARN to use instead of module generated one"
   default     = ""
 }
-
+variable "task_execution_role_arn" {
+  description = "Execution role arn for tasks. Required got Fargate"
+  default = ""
+}
 variable "task_identifier" {
   description = "Unique identifier for this pganalyze task (used in log prefix, service name etc.)"
   default     = "task"

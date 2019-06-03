@@ -16,15 +16,17 @@ module "basic" {
   environment           = "${var.environment}"
   organization          = "appzen"
 
-  #docker_registry = "105667981759.dkr.ecr.us-west-2.amazonaws.com/wiser"
-  #docker_image    = "map-application:latest"
-  docker_image = "infrastructureascode/hello-world:latest"
+  #docker_registry = "xxxxxxxxxx.dkr.ecr.us-west-2.amazonaws.com/account"
+  docker_image = "rawmind/web-test:latest"
 
   app_port             = 8080
-  dns_parent_zone_name = "test.appzen.com"                                 # target group & container port
+  dns_parent_zone_name = "test.appzen.com"
   lb_enable_http       = true
   lb_internal          = true
   lb_subnet_ids        = ["${data.aws_subnet_ids.private_subnet_ids.ids}"]
   region               = "${var.region}"
   vpc_id               = "${data.aws_vpc.vpc.id}"
+  docker_port_mappings = "${list(
+    map("containerPort", 8080, "protocol", "tcp")
+    )}"
 }
