@@ -185,6 +185,7 @@ variable "task_definition_arn" {
   description = "Task definition ARN to use instead of module generated one"
   default     = ""
 }
+
 variable "task_execution_role_arn" {
   description = "Execution role arn for tasks. Required got Fargate"
   default = ""
@@ -193,7 +194,10 @@ variable "task_identifier" {
   description = "Unique identifier for this pganalyze task (used in log prefix, service name etc.)"
   default     = "task"
 }
-
+variable "task_role_arn" {
+  description = "Task role ARN to use instead of module generated one"
+  default = ""
+}
 variable "log_group_name" {
   description = "Name for CloudWatch Log Group that will receive collector logs (must be unique, default is created from service_identifier and task_identifier)"
   type        = "string"

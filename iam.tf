@@ -3,6 +3,7 @@
 ###
 
 # TODO: Create IAM module
+# var.task_role_arn == ""
 data "aws_iam_policy_document" "task_policy" {
   count = "${module.enabled.value}"
 
@@ -32,6 +33,7 @@ data "aws_iam_policy_document" "task_policy" {
   }
 }
 
+# var.task_role_arn == ""
 data "aws_iam_policy_document" "assume_role_task" {
   count = "${module.enabled.value}"
 
@@ -58,6 +60,7 @@ data "aws_iam_policy_document" "assume_role_service" {
   }
 }
 
+# var.task_role_arn == ""
 resource "aws_iam_role" "task" {
   count              = "${module.enabled.value}"
   name_prefix        = "${var.service_identifier}-${var.task_identifier}-ecsTaskRole"
@@ -65,6 +68,7 @@ resource "aws_iam_role" "task" {
   assume_role_policy = "${data.aws_iam_policy_document.assume_role_task.json}"
 }
 
+# var.task_role_arn == ""
 resource "aws_iam_role_policy" "task" {
   count       = "${module.enabled.value}"
   name_prefix = "${var.service_identifier}-${var.task_identifier}-ecsTaskPolicy"
