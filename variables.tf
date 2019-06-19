@@ -7,6 +7,11 @@ variable "dns_aliases" {
   default     = []
 }
 
+variable "dns_full_name" {
+  description = "Use full name (id from label module) instead of short name for DNS host"
+  default     = false
+}
+
 variable "dns_parent_zone_name" {
   description = "DNS name of the parent zone to put this in"
   default     = ""
@@ -94,6 +99,7 @@ variable "docker_cpu" {
   description = "CPU units for task"
   default     = "512"
 }
+
 variable "docker_environment" {
   description = "List of environment maps of format { \"name\" = \"var_name\", \"value\" = \"var_value\" }"
   type        = "list"
@@ -167,9 +173,15 @@ variable "requires_compatibilities" {
 
 variable "security_group_ids" {
   description = "The security groups associated with the task or service"
-  type = "list"
-  default = []
+  type        = "list"
+  default     = []
 }
+
+variable "service_full_name" {
+  description = "Use full name (id from label module) instead of short name for service name"
+  default     = false
+}
+
 variable "service_identifier" {
   description = "Unique identifier for this pganalyze service (used in log prefix, service name etc.)"
   default     = "service"
@@ -177,8 +189,8 @@ variable "service_identifier" {
 
 variable "subnet_ids" {
   description = "The subnets associated with the task or service. For awsvpc"
-  type = "list"
-  default = []
+  type        = "list"
+  default     = []
 }
 
 variable "task_definition_arn" {
@@ -188,16 +200,19 @@ variable "task_definition_arn" {
 
 variable "task_execution_role_arn" {
   description = "Execution role arn for tasks. Required got Fargate"
-  default = ""
+  default     = ""
 }
+
 variable "task_identifier" {
   description = "Unique identifier for this pganalyze task (used in log prefix, service name etc.)"
   default     = "task"
 }
+
 variable "task_role_arn" {
   description = "Task role ARN to use instead of module generated one"
-  default = ""
+  default     = ""
 }
+
 variable "log_group_name" {
   description = "Name for CloudWatch Log Group that will receive collector logs (must be unique, default is created from service_identifier and task_identifier)"
   type        = "string"

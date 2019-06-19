@@ -100,7 +100,8 @@ output "service_iam_role_name" {
 
 output "cluster_arn" {
   description = "ECS cluster ARN"
-  value       = "${element(concat(
+
+  value = "${element(concat(
     aws_ecs_service.service-no-lb.*.cluster,
     aws_ecs_service.service.*.cluster,
     aws_ecs_service.service-no-lb-net.*.cluster,
@@ -110,7 +111,8 @@ output "cluster_arn" {
 
 output "service_arn" {
   description = "ECS service ARN"
-  value       = "${element(concat(
+
+  value = "${element(concat(
     aws_ecs_service.service-no-lb.*.id,
     aws_ecs_service.service.*.id,
     aws_ecs_service.service-no-lb-net.*.id,
@@ -120,7 +122,8 @@ output "service_arn" {
 
 output "service_name" {
   description = "ECS service name"
-  value       = "${element(concat(
+
+  value = "${element(concat(
     aws_ecs_service.service-no-lb.*.name,
     aws_ecs_service.service.*.name,
     aws_ecs_service.service-no-lb-net.*.name,
