@@ -133,5 +133,6 @@ output "service_name" {
 
 output "container_json" {
   description = ""
-  value       = "${element(concat(data.template_file.container_definition.*.rendered, list("")), 0)}"
+  #value       = "${element(concat(data.template_file.container_definition.*.rendered, list("")), 0)}"
+  value       = "${module.merged.container_definitions}"
 }

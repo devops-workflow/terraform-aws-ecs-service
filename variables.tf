@@ -276,3 +276,30 @@ variable "container_definition_additional" {
   description = "Additional parameters to add to container definition. This is a json substring"
   default     = ""
 }
+
+variable "firelens_port" {
+  description = "This is firelens port"
+  default     = ""
+}
+
+variable "firelens_host_url" {
+  description = "This is firelens Host"
+  default     = ""
+}
+
+variable "sidecar_container_definition_additional" {
+  description = "Additional parameters to add to container definition. This is a json substring"
+  default     = ""
+}
+
+variable "sidecar_docker_image" {
+  description = "Docker image to use for task"
+  type        = "string"
+  default     = ""
+}
+
+variable "sidecar_docker_environment" {
+  description = "List of environment maps of format { \"name\" = \"var_name\", \"value\" = \"var_value\" }"
+  type        = "list"
+  default     = []
+}
