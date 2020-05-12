@@ -1,0 +1,21 @@
+[
+    {
+        "name": "${name}",
+        "image": "${image}",
+        "memory": ${memory},
+        "memoryReservation": ${memory_reservation},
+        "portMappings": ${port_mappings},
+        ${command_override}
+        "environment": ${environment},
+        "mountPoints": ${mount_points},
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+               "awslogs-group": "${awslogs_group}",
+               "awslogs-region": "${awslogs_region}",
+               "awslogs-stream-prefix": "${awslogs_stream_prefix}"
+            }
+        }
+        ${additional_config}
+    }
+]

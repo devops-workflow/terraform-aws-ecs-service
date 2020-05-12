@@ -1,47 +1,4 @@
 //
-// Variables specific to module label
-//
-variable "attributes" {
-  description = "Suffix name with additional attributes (policy, role, etc.)"
-  type        = "list"
-  default     = []
-}
-
-variable "delimiter" {
-  description = "Delimiter to be used between `name`, `namespaces`, `attributes`, etc."
-  default     = "-"
-}
-
-variable "environment" {
-  description = "Environment (ex: `dev`, `qa`, `stage`, `prod`). (Second or top level namespace. Depending on namespacing options)"
-}
-
-variable "name" {
-  description = "Base name for resources"
-}
-
-variable "namespace-env" {
-  description = "Prefix name with the environment. If true, format is: <env>-<name>"
-  default     = true
-}
-
-variable "namespace-org" {
-  description = "Prefix name with the organization. If true, format is: <org>-<env namespaced name>. If both env and org namespaces are used, format will be <org>-<env>-<name>"
-  default     = false
-}
-
-variable "organization" {
-  description = "Organization name (Top level namespace)."
-  default     = ""
-}
-
-variable "tags" {
-  description = "A map of additional tags"
-  type        = "map"
-  default     = {}
-}
-
-//
 // Variables specific to DNS Aliases module
 //
 variable "dns_aliases" {
@@ -50,110 +7,14 @@ variable "dns_aliases" {
   default     = []
 }
 
+variable "dns_full_name" {
+  description = "Use full name (id from label module) instead of short name for DNS host"
+  default     = false
+}
+
 variable "dns_parent_zone_name" {
   description = "DNS name of the parent zone to put this in"
   default     = ""
-}
-
-//
-// Variables specific to LB module
-//
-variable "lb_enable_https" {
-  description = "Enable HTTPS listener in LB (http or https MUST be enabled)"
-  default     = "false"
-}
-
-variable "lb_enable_http" {
-  description = "Enable HTTP listener in LB (http or https MUST be enabled)"
-  default     = true
-}
-
-variable "lb_internal" {
-  description = "Configure LB as internal-only"
-  default     = true
-}
-
-variable "lb_subnet_ids" {
-  description = "VPC subnet IDs in which to create the LB (unnecessary if neither lb_enable_https or lb_enable_http are true)"
-  type        = "list"
-  default     = []
-}
-
-variable "acm_cert_domain" {
-  description = "Domain name of ACM-managed certificate"
-  type        = "string"
-  default     = ""
-}
-
-variable "lb_healthcheck_interval" {
-  description = "Time in seconds between LB health checks (default 30)"
-  default     = 30
-}
-
-variable "lb_healthcheck_path" {
-  description = "URI path for LB health checks (default /)"
-  default     = "/"
-}
-
-variable "lb_healthcheck_port" {
-  description = "Port for LB to use when connecting health checks (default same as application traffic)"
-  default     = "traffic-port"
-}
-
-variable "lb_healthcheck_protocol" {
-  description = "Protocol for LB to use when connecting health checks (default HTTP)"
-  default     = "HTTP"
-}
-
-variable "lb_healthcheck_timeout" {
-  description = "Timeout in seconds for LB to use when connecting health checks (default 5)"
-  default     = 5
-}
-
-variable "lb_healthcheck_healthy_threshold" {
-  description = "Number of consecutive successful health checks before marking service as healthy (default 5)"
-  default     = 5
-}
-
-variable "lb_healthcheck_unhealthy_threshold" {
-  description = "Number of consecutive failed health checks before marking service as unhealthy (default 2)"
-  default     = 5
-}
-
-variable "lb_healthcheck_matcher" {
-  description = "HTTP response codes to accept as healthy (default 200)"
-  default     = "200-399"
-}
-
-variable "lb_cookie_duration" {
-  description = "Duration of LB session stickiness cookie in seconds (default 86400)"
-  default     = "86400"
-}
-
-variable "lb_https_ports" {
-  description = "HTTPS ports load balancer should listen on"
-  default     = "443"
-}
-
-variable "lb_ingress_cidr_blocks" {
-  description = "List of ingress CIDR blocks for load balancer"
-  type        = "list"
-  default     = ["10.0.0.0/8"]
-}
-
-variable "lb_ports" {
-  description = "Ports load balancer should listen on"
-  default     = "80"
-}
-
-variable "lb_stickiness_enabled" {
-  description = "Enable LB session stickiness (default false)"
-  default     = "false"
-}
-
-variable "lb_type" {
-  description = "Type of LB to create: application, network"
-  default     = "application"
 }
 
 // Variables specific to Security Group module
@@ -167,6 +28,11 @@ variable "lb_type" {
 //
 variable "enabled" {
   description = "Set to false to prevent the module from creating anything"
+  default     = true
+}
+
+variable "enable_ecs_managed_tags" {
+  description = "Enable ECS managed task tagging"
   default     = true
 }
 
@@ -186,6 +52,23 @@ variable "vpc_id" {
   type        = "string"
 }
 
+variable "assign_public_ip" {
+  description = "Assign a public IP address to the ENI (Fargate launch type only)"
+  default     = false
+}
+
+variable "awsvpc_security_group_ids" {
+  description = "Security ID's to assign to awsvpc network mode tasks"
+  type        = "list"
+  default     = []
+}
+
+variable "awsvpc_subnet_ids" {
+  description = "Subnet IDs to put awsvpc network tasks in"
+  type        = "list"
+  default     = []
+}
+
 variable "ecs_cluster_arn" {
   description = "ARN of ECS cluster in which the service will be deployed"
   type        = "string"
@@ -202,9 +85,19 @@ variable "ecs_desired_count" {
   default     = 1
 }
 
+variable "ecs_launch_type" {
+  description = "The launch type on which to run your service. The valid values are EC2 and FARGATE"
+  default     = "EC2"
+}
+
 variable "docker_command" {
   description = "String to override CMD in Docker container (default \"\")"
   default     = ""
+}
+
+variable "docker_cpu" {
+  description = "CPU units for task"
+  default     = "512"
 }
 
 variable "docker_environment" {
@@ -262,14 +155,62 @@ variable "network_mode" {
   default     = "bridge"
 }
 
+variable "platform_version" {
+  description = "The platform version on which to run your service. Only applicable for launch_type set to FARGATE"
+  default     = ""
+}
+
+variable "propagate_tags_method" {
+  description = "Propagate tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION"
+  default     = "SERVICE"
+}
+
+variable "requires_compatibilities" {
+  description = "A set of launch types required by the task. The valid values are EC2 and FARGATE"
+  type        = "list"
+  default     = ["EC2"]
+}
+
+variable "security_group_ids" {
+  description = "The security groups associated with the task or service"
+  type        = "list"
+  default     = []
+}
+
+variable "service_full_name" {
+  description = "Use full name (id from label module) instead of short name for service name"
+  default     = false
+}
+
 variable "service_identifier" {
   description = "Unique identifier for this pganalyze service (used in log prefix, service name etc.)"
   default     = "service"
 }
 
+variable "subnet_ids" {
+  description = "The subnets associated with the task or service. For awsvpc"
+  type        = "list"
+  default     = []
+}
+
+variable "task_definition_arn" {
+  description = "Task definition ARN to use instead of module generated one"
+  default     = ""
+}
+
+variable "task_execution_role_arn" {
+  description = "Execution role arn for tasks. Required got Fargate"
+  default     = ""
+}
+
 variable "task_identifier" {
   description = "Unique identifier for this pganalyze task (used in log prefix, service name etc.)"
   default     = "task"
+}
+
+variable "task_role_arn" {
+  description = "Task role ARN to use instead of module generated one"
+  default     = ""
 }
 
 variable "log_group_name" {
@@ -298,6 +239,11 @@ variable "ecs_deployment_maximum_percent" {
 variable "ecs_deployment_minimum_healthy_percent" {
   description = "Lower limit in percentage of tasks that must remain healthy during a deployment (default 100)"
   default     = "100"
+}
+
+variable "ecs_health_check_grace_period_seconds" {
+  description = "Health check grace period (seconds) before LB health checks start"
+  default     = "30"
 }
 
 variable "ecs_placement_constraints" {
@@ -329,4 +275,31 @@ variable "container_definition" {
 variable "container_definition_additional" {
   description = "Additional parameters to add to container definition. This is a json substring"
   default     = ""
+}
+
+variable "firelens_port" {
+  description = "This is firelens port"
+  default     = ""
+}
+
+variable "firelens_host_url" {
+  description = "This is firelens Host"
+  default     = ""
+}
+
+variable "sidecar_container_definition_additional" {
+  description = "Additional parameters to add to container definition. This is a json substring"
+  default     = ""
+}
+
+variable "sidecar_docker_image" {
+  description = "Docker image to use for task"
+  type        = "string"
+  default     = ""
+}
+
+variable "sidecar_docker_environment" {
+  description = "List of environment maps of format { \"name\" = \"var_name\", \"value\" = \"var_value\" }"
+  type        = "list"
+  default     = []
 }

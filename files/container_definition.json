@@ -1,13 +1,19 @@
-[
     {
         "name": "${name}",
         "image": "${image}",
-        "memory": ${memory},
-        "memoryReservation": ${memory_reservation},
-        "portMappings": ${port_mappings},
-        ${command_override}
+        "memory": null,
+        "memoryReservation": null,
+        "portMappings": [],
         "environment": ${environment},
-        "mountPoints": ${mount_points},
+        "mountPoints": [],
+        "firelensConfiguration": {
+            "type": "fluentbit",
+            "options": {
+              "config-file-type": "file",
+              "enable-ecs-log-metadata": "true",
+              "config-file-value": "/fluent-bit/etc/json-annotate.conf"
+            }
+        },
         "logConfiguration": {
             "logDriver": "awslogs",
             "options": {
@@ -18,4 +24,3 @@
         }
         ${additional_config}
     }
-]
