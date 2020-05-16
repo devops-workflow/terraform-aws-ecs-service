@@ -279,7 +279,7 @@ variable "container_definition_additional" {
 
 variable "firelens_port" {
   description = "This is firelens port"
-  default     = ""
+  default     = "24224"
 }
 
 variable "firelens_host_url" {
@@ -302,4 +302,9 @@ variable "sidecar_docker_environment" {
   description = "List of environment maps of format { \"name\" = \"var_name\", \"value\" = \"var_value\" }"
   type        = "list"
   default     = []
+}
+
+variable "sidecar_docker_memory_reservation" {
+  description = "Soft limit on memory use for task container (default 128)"
+  default     = 128
 }
