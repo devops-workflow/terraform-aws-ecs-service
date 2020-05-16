@@ -254,8 +254,6 @@ resource "aws_ecs_task_definition" "task" {
   #count                 = "${module.enabled.value}"
   count                    = "${module.enabled.value && var.task_definition_arn == "" ? 1 : 0}"
   family                   = "${module.label.id}"
-  #container_definitions    = "${var.container_definition == "" ? element(concat(data.template_file.container_definition.*.rendered, list("")), 0) : var.container_definition}"
-  #container_definitions    = "${var.container_definition == "" && var.firelens_host_url == "" ? element(concat(data.template_file.container_definition.*.rendered, list("")), 0) : local.container_definitions}"
   container_definitions    = "${local.container_definitions}"
   network_mode             = "${var.network_mode}"
   tags                     = "${module.label.tags}"
