@@ -13,7 +13,7 @@ module "enabled" {
 
 module "enable_lb" {
   source  = "devops-workflow/boolean/local"
-  version = "0.1.1"
+  version = "0.1.2"
   value   = "${var.enable_lb}"
 }
 
