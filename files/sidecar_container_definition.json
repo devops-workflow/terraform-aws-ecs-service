@@ -1,0 +1,26 @@
+    {
+        "name": "${name}",
+        "image": "${image}",
+        "memory": ${memory},
+        "memoryReservation": ${memory_reservation},
+        "portMappings": [],
+        "environment": ${environment},
+        "mountPoints": [],
+        "firelensConfiguration": {
+            "type": "fluentbit",
+            "options": {
+              "config-file-type": "file",
+              "enable-ecs-log-metadata": "true",
+              "config-file-value": "/fluent-bit/etc/json-annotate.conf"
+            }
+        },
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+               "awslogs-group": "${awslogs_group}",
+               "awslogs-region": "${awslogs_region}",
+               "awslogs-stream-prefix": "${awslogs_stream_prefix}"
+            }
+        }
+        ${additional_config}
+    }

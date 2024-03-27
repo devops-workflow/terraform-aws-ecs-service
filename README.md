@@ -76,11 +76,13 @@ This software is released under the MIT License (see `LICENSE`).
 | ecs\_deployment\_maximum\_percent | Upper limit in percentage of tasks that can be running during a deployment (default 200) | string | `"200"` | no |
 | ecs\_deployment\_minimum\_healthy\_percent | Lower limit in percentage of tasks that must remain healthy during a deployment (default 100) | string | `"100"` | no |
 | ecs\_desired\_count | Desired number of containers in the task (default 1) | string | `"1"` | no |
+| ecs\_health\_check\_grace\_period\_seconds | Health check grace period (seconds) before LB health checks start | string | `"30"` | no |
 | ecs\_log\_retention | Number of days of ECS task logs to retain (default 3) | string | `"3"` | no |
 | ecs\_placement\_constraints | Placement contraints to use when distributing tasks | list | `<list>` | no |
 | ecs\_placement\_strategy\_field | Container metadata field to use when distributing tasks (default memory) | string | `"memory"` | no |
 | ecs\_placement\_strategy\_type | Placement strategy to use when distributing tasks (default binpack) | string | `"binpack"` | no |
 | ecs\_security\_group\_id | Security group ID of ECS cluster in which the service will be deployed | string | n/a | yes |
+| enable\_ecs\_managed\_tags | Enable ECS managed task tagging | string | `"true"` | no |
 | enable\_lb | Set to false to prevent the module from creating a Load Balancer | string | `"true"` | no |
 | enabled | Set to false to prevent the module from creating anything | string | `"true"` | no |
 | environment | Environment (ex: `dev`, `qa`, `stage`, `prod`). (Second or top level namespace. Depending on namespacing options) | string | n/a | yes |
@@ -99,6 +101,9 @@ This software is released under the MIT License (see `LICENSE`).
 | lb\_https\_ports | HTTPS ports load balancer should listen on | string | `"443"` | no |
 | lb\_ingress\_cidr\_blocks | List of ingress CIDR blocks for load balancer | list | `<list>` | no |
 | lb\_internal | Configure LB as internal-only | string | `"true"` | no |
+| lb\_listener\_arn | Add to existing LB listener | string | `""` | no |
+| lb\_listener\_rule\_pattern | Add to existing LB listener with rule pattern | string | `""` | no |
+| lb\_listener\_rule\_priority | Add to existing LB listener as rule priority | string | `""` | no |
 | lb\_ports | Ports load balancer should listen on | string | `"80"` | no |
 | lb\_stickiness\_enabled | Enable LB session stickiness (default false) | string | `"false"` | no |
 | lb\_subnet\_ids | VPC subnet IDs in which to create the LB (unnecessary if neither lb_enable_https or lb_enable_http are true) | list | `<list>` | no |
@@ -109,9 +114,13 @@ This software is released under the MIT License (see `LICENSE`).
 | namespace-org | Prefix name with the organization. If true, format is: <org>-<env namespaced name>. If both env and org namespaces are used, format will be <org>-<env>-<name> | string | `"false"` | no |
 | network\_mode | Docker network mode for task (default "bridge") | string | `"bridge"` | no |
 | organization | Organization name (Top level namespace). | string | `""` | no |
+| propagate\_tags\_method | Propagate tags from the task definition or the service to the tasks. The valid values are SERVICE and TASK_DEFINITION | string | `"SERVICE"` | no |
 | region | AWS region in which ECS cluster is located (default is 'us-east-1') | string | `"us-east-1"` | no |
 | service\_identifier | Unique identifier for this pganalyze service (used in log prefix, service name etc.) | string | `"service"` | no |
 | tags | A map of additional tags | map | `<map>` | no |
+| target\_group\_only | Only create target group without a load balancer. For when more advanced LB setups are required | string | `"false"` | no |
+| target\_type | Type for targets for target group. Can be: instance or ip | string | `"instance"` | no |
+| task\_definition\_arn | Task definition ARN to use instead of module generated one | string | `""` | no |
 | task\_identifier | Unique identifier for this pganalyze task (used in log prefix, service name etc.) | string | `"task"` | no |
 | vpc\_id | ID of VPC in which ECS cluster is located | string | n/a | yes |
 
@@ -121,8 +130,18 @@ This software is released under the MIT License (see `LICENSE`).
 |------|-------------|
 | cluster\_arn | ECS cluster ARN |
 | container\_json |  |
+| lb\_arn | ARN of the LB |
 | lb\_dns\_aliases | List of DNS aliases add for ALB |
 | lb\_dns\_name | FQDN of ALB provisioned for service (if present) |
+| lb\_listener\_arns | ARNs of all the LB Listeners |
+| lb\_listener\_http\_arns | The ARNs of the HTTP LB Listeners |
+| lb\_listener\_https\_arns | The ARNs of the HTTPS LB Listeners |
+| lb\_listener\_tcp\_arns | The ARNs of the network TCP LB Listeners |
+| lb\_target\_group\_arns | ARNs of all the target groups. Useful for passing to your Auto Scaling group module. |
+| lb\_target\_group\_arns\_suffix | ARNs suffix of all the target groups. Useful for passing to your Auto Scaling group module. |
+| lb\_target\_group\_http\_arns | ARNs of the HTTP target groups. Useful for passing to your Auto Scaling group module. |
+| lb\_target\_group\_https\_arns | ARNs of the HTTPS target groups. Useful for passing to your Auto Scaling group module. |
+| lb\_target\_group\_tcp\_arns | ARNs of the TCP target groups. Useful for passing to your Auto Scaling group module. |
 | lb\_zone\_id | Route 53 zone ID of ALB provisioned for service (if present) |
 | log\_group\_name | Cloudwatch log group name for service |
 | service\_arn | ECS service ARN |

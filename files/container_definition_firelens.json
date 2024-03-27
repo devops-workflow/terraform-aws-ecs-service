@@ -1,0 +1,19 @@
+    {
+        "name": "${name}",
+        "image": "${image}",
+        "memory": ${memory},
+        "memoryReservation": ${memory_reservation},
+        "portMappings": ${port_mappings},
+        ${command_override}
+        "environment": ${environment},
+        "mountPoints": ${mount_points},
+        "logConfiguration": {
+            "logDriver": "awsfirelens",
+            "options": {
+               "Name": "forward",
+               "Host": "${firelens_host}",
+               "Port": "${firelens_port}"
+            }
+        }
+        ${additional_config}
+    }
